@@ -7,7 +7,7 @@ export const addPreference = async (req, res) => {
 
     const existing = await Preference.findOne({ studentId });
     if (existing) {
-      return res.status(400).json({ status: "Preference already exists for this student",message:error.message });
+      return res.status(400).json({ status: "failed", message:"Preference already exists for this student"});
     }
 
     const newPref = new Preference({
@@ -22,9 +22,9 @@ export const addPreference = async (req, res) => {
     });
 
     await newPref.save();
-    res.status(201).json({ status :"success",message: "Preference added successfully",data:{preference: newPref} });
+    res.status(201).json({ status :"success", message: "Preference added successfully", data: newPref});
   } catch (err) {
-    res.status(500).json({status: "Failed to add preference", message: error.message });
+    res.status(500).json({status: "failed", message: err.message });
   }
 };
 
@@ -37,16 +37,14 @@ export const updatePreference = async (req, res) => {
     const updated = await Preference.findOneAndUpdate({ studentId: studId }, updates, { new: true });
 
     if (!updated) {
-      return res.status(404).json({ status: "Preference not found for this student",message : error.message });
+      return res.status(404).json({ status: "Preference not found for this student", message : error.message });
     }
 
-    res.status(200).json({ status:"success",message: "Preference updated successfully", data:{preference: updated} });
+    res.status(200).json({ status:"success", message: "Preference updated successfully", data: updated});
   } catch (err) {
-    res.status(500).json({ status: "Failed to update preference", message: error.message });
+    res.status(500).json({ status: "failed", message: err.message });
   }
 };
-
-
 
 // GET /:stud-id
 export const getPreference = async (req, res) => {
@@ -59,8 +57,8 @@ export const getPreference = async (req, res) => {
       return res.status(404).json({ status: "Preference not found" });
     }
 
-    res.status(200).json(preference);
+    res.status(200).json({status:"success", message:"Preference updated successfully", data: preference});
   } catch (err) {
-    res.status(500).json({status: "Failed to fetch preference", message: error.message });
+    res.status(500).json({status: "failed", message: err.message });
   }
 };

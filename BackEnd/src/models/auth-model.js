@@ -12,6 +12,11 @@ const AuthSchema = new mongoose.Schema(
             type: String,
             required : false
         },
+        isEmailVerified: {
+            type: Boolean,
+            required: false,
+            default: false,
+        },
         userType: {
             type: String,
             required: true,

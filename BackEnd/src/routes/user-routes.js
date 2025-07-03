@@ -1,5 +1,5 @@
- import express from "express";
- 
+import express from "express";
+
 import ensureAuthenticated from "../middlewares/validate-token-middleware.js";
 import {
     addStudent,
@@ -16,7 +16,7 @@ import {
 const router = express.Router();
 
 //USER PROFILE
-router.post('/',addStudent );
+router.post('/', ensureAuthenticated, addStudent);
 router.get('/:auth-id',getStudent);
  router.put('/:auth-id', updateStudent);
  router.delete('/:auth-id',deleteStudent);
