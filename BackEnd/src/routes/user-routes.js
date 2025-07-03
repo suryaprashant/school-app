@@ -21,10 +21,9 @@ router.get('/:authId',getStudent);
  router.put('/:authId', updateStudent);
  router.delete('/:authId',deleteStudent);
 
-
+//Preferences
 router.post("/preferences/", addPreference);
 router.put("/preferences/:studId", updatePreference);
-
 router.get("/preferences/:studId", getPreference);
 
  export default router;
