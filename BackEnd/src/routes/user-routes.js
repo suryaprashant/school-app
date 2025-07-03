@@ -1,16 +1,30 @@
-// import express from "express";
-//import ensureAuthenticated from "../middlewares/validate-token-middleware.js";
-// const router = express.Router();
+ import express from "express";
+ 
+import ensureAuthenticated from "../middlewares/validate-token-middleware.js";
+import {
+    addStudent,
+    updateStudent,
+    deleteStudent,
+    getStudent
+} from "../controllers/user-controllers.js";
+import {
+  addPreference,
+  updatePreference,
+  getPreference
+} from "../controllers/pref-controllers.js";
 
-// //USER PROFILE
-// router.post('/', ensureAuthenticated, );
-// router.get('/:id', ensureAuthenticated,);
-// router.put('/:id', ensureAuthenticated,);
-// router.delete('/:id',);
+const router = express.Router();
 
-// //USER PREFERENCES
-// router.post('/prefs', ensureAuthenticated,);
-// router.get('/prefs/:id', ensureAuthenticated,);
-// router.put('/prefs/:id', ensureAuthenticated,);
+//USER PROFILE
+router.post('/',addStudent );
+router.get('/:authId',getStudent);
+ router.put('/:authId', updateStudent);
+ router.delete('/:authId',deleteStudent);
 
-// export default router;
+
+router.post("/preferences/", addPreference);
+router.put("/preferences/:studId", updatePreference);
+
+router.get("/preferences/:studId", getPreference);
+
+ export default router;

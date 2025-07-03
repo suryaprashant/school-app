@@ -2,12 +2,13 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "../config/db.js";
-import authRoutes from './routes/auth-routes.js'
-// import userRoutes from './routes/user-routes.js'
+import authRoutes from './routes/auth-routes.js';
+import userRoutes from './routes/user-routes.js'
 // import schoolRoutes from './routes/school-routes.js'
 
 dotenv.config();
 connectDB();
+
 
 const app = express();
 
@@ -18,7 +19,7 @@ app.use(cors());
 
 //Routes for the API calls
 app.use('/api/auth', authRoutes);
-// app.use('/api/users', userRoutes);
+app.use('/api/users', userRoutes);
 // app.use('/api/admin', schoolRoutes);
 
 const PORT = process.env.PORT || 8080;
