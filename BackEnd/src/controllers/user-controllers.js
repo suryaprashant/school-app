@@ -8,8 +8,8 @@ export const addStudent = async (req, res) => {
         // Check if student already exists for this authId
         const existingStudent = await Student.findOne({ authId });
         if (existingStudent) {
-            return res.status(400).json({ status: "Student Already Exists",
-                                          message: error.message
+            return res.status(400).json({ status: "failed",
+                                          message: "Student Already Exists"
                                         });
         }
 
@@ -30,15 +30,14 @@ export const addStudent = async (req, res) => {
         res.status(201).json({
       status: "success",
       message: "Student added successfully",
-      data: {
-       student: newStudent
-      }
+      data:newStudent
+      
     });
   }
   catch (err) {
         res.status(500).json({ 
-      status: "Error Adding Students",
-      message: error.message });
+      status: "failed",
+      message:err.message});
     }
   };
 
@@ -55,13 +54,13 @@ export const updateStudent = async (req, res) => {
         );
 
         if (!updatedStudent) {
-            return res.status(404).json({  status: "Student Not Found",
-      message: error.message });
+            return res.status(404).json({  status: "failed",
+      message:"Student Not Found"});
         }
 
         res.status(200).json({status : 'success', message: "Student updated successfully", data:{student: updatedStudent }});
     } catch (err) {
-        res.status(500).json({ status: "Error updating student", message: error.message });
+        res.status(500).json({ status: "failed", message: err.message });
     }
 };
 
@@ -78,7 +77,7 @@ export const deleteStudent = async (req, res) => {
 
         res.status(200).json({status : 'success', message: "Student deleted successfully" });
     } catch (err) {
-        res.status(500).json({ status: "Error deleting student", message: error.message });
+        res.status(500).json({ status: "failed", message: err.message });
     }
 };
 
@@ -90,11 +89,11 @@ export const getStudent = async (req, res) => {
         const student = await Student.findOne({ authId });
 
         if (!student) {
-            return res.status(404).json({ status: "Student not found",message:error.message });
+            return res.status(404).json({ status: "failed",message:"Student not found" });
         }
 
         res.status(200).json(student);
     } catch (err) {
-        res.status(500).json({ status: "Error fetching student", message: error.message  });
+        res.status(500).json({ status: "failed", message: error.message  });
     }
 };

@@ -17,13 +17,13 @@ const router = express.Router();
 
 //USER PROFILE
 router.post('/',addStudent );
-router.get('/:authId',getStudent);
- router.put('/:authId', updateStudent);
- router.delete('/:authId',deleteStudent);
+router.get('/:auth-id',getStudent);
+ router.put('/:auth-id', updateStudent);
+ router.delete('/:auth-id',deleteStudent);
 
 //Preferences
 router.post("/preferences/", addPreference);
-router.put("/preferences/:studId", updatePreference);
-router.get("/preferences/:studId", getPreference);
+router.put("/preferences/:stud-id", updatePreference);
+router.get("/preferences/:stud-id", getPreference);
 
  export default router;

@@ -38,7 +38,7 @@ const StudentSchema = new mongoose.Schema(
         },
         userType: {
             type: String,
-            enum: ['student',''], // Since this is only for students
+            enum: ['student','parent'], // Since this is only for students
             required: true
         },
     },

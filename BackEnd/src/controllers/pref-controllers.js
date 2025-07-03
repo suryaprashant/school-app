@@ -56,7 +56,7 @@ export const getPreference = async (req, res) => {
     const preference = await Preference.findOne({ studentId: studId }).populate("studentId");
 
     if (!preference) {
-      return res.status(404).json({ status: "Preference not found",message:error.message });
+      return res.status(404).json({ status: "Preference not found" });
     }
 
     res.status(200).json(preference);
