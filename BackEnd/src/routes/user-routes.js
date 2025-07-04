@@ -26,4 +26,6 @@ router.post("/preferences/", addPreference);
 router.put("/preferences/:studId", updatePreference);
 router.get("/preferences/:studId", getPreference);
 
+
+
  export default router;
