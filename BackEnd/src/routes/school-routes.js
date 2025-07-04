@@ -1,27 +1,30 @@
-// import express from "express";
+import express from "express";
 //import ensureAuthenticated from "../middlewares/validate-token-middleware.js";
-// const router = express.Router();
+import {addSchool, getSchoolById, updateSchoolInfo, deleteSchool} from '../controllers/school-controllers.js';
+import {addAmenities, getAmenitiesById, updateAmenities} from '../controllers/amenities-controllers.js';
+import {addActivities, getActivitiesById, updateActivities} from '../controllers/activities-controllers.js';
+const router = express.Router();
 
-// //schools
-// router.post('/');
-// router.get('/');
-// router.get('/:id');
-// router.put('/:id');
-// router.delete('/:id');
+// Schools
+router.post('/schools/', addSchool);
+//router.get('/schools/');
+router.get('/schools/:id', getSchoolById);
+router.put('/schools/:id', updateSchoolInfo);
+router.delete('/schools/:id', deleteSchool);
 
-// //Amenities
-// router.post('/amenities');
-// router.get('/amenities/:id');
-// router.put('/amenities/:id');
+// Amenities
+router.post('/schools/amenities/', addAmenities);
+router.get('/schools/amenities/:id', getAmenitiesById);
+//router.put('/schools/amenities/:id', updateAmenities);
 
-// //Activities
-// router.post('/activities');
-// router.get('/activities/:id');
-// router.put('/activities/:id');
+// Activities
+router.post('/schools/activities/', addActivities);
+router.get('/schools/activities/:id', getActivitiesById);
+router.put('/schools/activities/:id', updateActivities);
 
 // //Alumnus
 // router.post('/alumnus');
 // router.get('/alumnus/:id');
 // router.put('/alumnus/:id');
 
-// export default router;
+export default router;
