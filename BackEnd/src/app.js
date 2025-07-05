@@ -9,7 +9,6 @@ import schoolRoutes from './routes/school-routes.js'
 dotenv.config();
 connectDB();
 
-
 const app = express();
 
 // ✅ Middleware to handle form-data correctly

@@ -7,6 +7,12 @@ const StudentSchema = new mongoose.Schema(
             ref: "auths", 
             required: true
         },
+        shortlistedSchools: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "schools" 
+        }
+        ],
         email: {
             type: String,
             required: true

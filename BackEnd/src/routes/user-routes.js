@@ -13,6 +13,14 @@ import {
   getPreference
 } from "../controllers/pref-controllers.js";
 
+import {
+  addToShortlist,
+  getShortlistedSchools,
+  removeShortlist,
+  getShortlistCount,
+} from "../controllers/shortlist-controllers.js";
+
+
 const router = express.Router();
 
 //USER PROFILE
@@ -26,6 +34,10 @@ router.post("/preferences/", addPreference);
 router.put("/preferences/:studId", updatePreference);
 router.get("/preferences/:studId", getPreference);
 
+router.post("/shortlist", addToShortlist);
+router.get("/shortlist/:authId", getShortlistedSchools);
+router.get("/shortlist/count/:authId", getShortlistCount);
+router.post("/shortlist/remove",removeShortlist);
 
 
  export default router;
