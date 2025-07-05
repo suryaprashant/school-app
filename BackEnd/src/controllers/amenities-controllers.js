@@ -25,7 +25,6 @@ export const addAmenities = async (req, res) => {
   }
 };
 
-// Get amenities by Id 
 export const getAmenitiesById = async (req, res) => {
   try {
      const {id: schoolId } = req.params;
@@ -82,4 +81,3 @@ export const updateAmenities = async (req, res) => {
     message: error.message });
   }
 };
-
