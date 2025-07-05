@@ -3,13 +3,6 @@ import express from "express";
 import {addSchool, getSchoolById, getSchoolsByStatus,  updateSchoolInfo, deleteSchool} from '../controllers/school-controllers.js';
 import {addAmenities, getAmenitiesById, updateAmenities} from '../controllers/amenities-controllers.js';
 import {addActivities, getActivitiesById, updateActivities} from '../controllers/activities-controllers.js';
-import {
-  addAlumni,
-  getAlumniBySchool,
-  updateAlumniBySchool,
-  deleteAlumniBySchool
-} from "../controllers/alumni-controllers.js";
-
 const router = express.Router();
 
 // Schools
@@ -29,11 +22,9 @@ router.post('/schools/activities/', addActivities);
 router.get('/schools/activities/:id', getActivitiesById);
 router.put('/schools/activities/:id', updateActivities);
 
-//Alumni
-router.post("/alumnus", addAlumni); // POST /api/alumni
-router.get("/alumnus/:id", getAlumniBySchool); // GET /api/alumni/:schoolId
-router.put("/alumnus/:id", updateAlumniBySchool); // PUT /api/alumni/:schoolId
-router.delete("/alumnus/:id", deleteAlumniBySchool); // DELETE /api/alumni/:schoolId
-
+// //Alumnus
+// router.post('/alumnus');
+// router.get('/alumnus/:id');
+// router.put('/alumnus/:id');
 
 export default router;
