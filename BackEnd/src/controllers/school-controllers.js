@@ -4,11 +4,11 @@ import School from '../models/school-model.js';
 export const addSchool = async (req, res) => {
   try {
     const {
-      name, description, board, state, city, schoolMode, genderType, shifts, feeRange, upto, email, mobileNo, specialist, tags, website
+      name, description, board, state, city, schoolMode, genderType, shifts, feeRange, upto, email, mobileNo, specialist, tags, website, status
     } = req.body;
 
     const school = new School({
-       name, description, board, state, city, schoolMode, genderType, shifts, feeRange, upto, email, mobileNo, specialist, tags, website
+       name, description, board, state, city, schoolMode, genderType, shifts, feeRange, upto, email, mobileNo, specialist, tags, website, status
     });
 
     const saveSchool = await school.save();
@@ -53,6 +53,40 @@ export const getSchoolById = async (req, res) => {
   }
 };
 
+//Get school by status
+export const getSchoolsByStatus = async (req, res) => {
+  try {
+    const { status } = req.params;
+
+    const allowedStatus = ['pending', 'accepted', 'rejected'];
+    if (!allowedStatus.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid status. Must be pending, accepted, or rejected.'
+      });
+    }
+
+    const schools = await School.find({ status });
+
+    if (schools.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: `No schools found with status: ${status}`
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Fetched schools with status: ${status}`,
+      data: schools
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'Error while fetching schools by status',
+      message: error.message
+    });
+  }
+};
 
 //Update school info 
 export const updateSchoolInfo = async (req, res) => {

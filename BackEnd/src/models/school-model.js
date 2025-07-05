@@ -40,7 +40,7 @@ const SchoolSchema = new mongoose.Schema({
   specialist: { type: [String],required: false},
   tags:{ type: [String],required: false},
   website: { type: String, required: false },
-  
+  status:{ type: String, required: true,  enum: ['pending', 'rejected', 'accepted'] ,default: "pending" },
   //image: { type: String, required: true }, 
   //logo: { type: String, required: true },
   //banner: { type: String, required: true },
