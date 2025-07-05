@@ -1,4 +1,5 @@
 import express from "express";
+
 //import ensureAuthenticated from "../middlewares/validate-token-middleware.js";
 import {addSchool, getSchoolById, getSchoolsByStatus,  updateSchoolInfo, deleteSchool} from '../controllers/school-controllers.js';
 import {addAmenities, getAmenitiesById, updateAmenities} from '../controllers/amenities-controllers.js';
@@ -24,9 +25,9 @@ router.get('/schools/activities/:id', getActivitiesById);
 router.put('/schools/activities/:id', updateActivities);
 
 //Alumni
-router.post("/alumnus", addAlumni); // POST /api/alumni
-router.get("/alumnus/:id", getAlumniBySchool); // GET /api/alumni/:schoolId
-router.put("/alumnus/:id", updateAlumniBySchool); // PUT /api/alumni/:schoolId
-router.delete("/alumnus/:id", deleteAlumniBySchool); // DELETE /api/alumni/:schoolId
+router.post("/alumnus", addAlumni);
+router.get("/alumnus/:id", getAlumniBySchool);
+router.put("/alumnus/:id", updateAlumniBySchool);
+router.delete("/alumnus/:id", deleteAlumniBySchool);
 
 export default router;

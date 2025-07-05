@@ -1,12 +1,14 @@
 import express from "express";
 
 import ensureAuthenticated from "../middlewares/validate-token-middleware.js";
+
 import {
     addStudent,
     updateStudent,
     deleteStudent,
     getStudent
 } from "../controllers/user-controllers.js";
+
 import {
   addPreference,
   updatePreference,
@@ -25,19 +27,18 @@ const router = express.Router();
 
 //USER PROFILE
 router.post('/', ensureAuthenticated, addStudent);
-router.get('/:authId',getStudent);
- router.put('/:authId', updateStudent);
- router.delete('/:authId',deleteStudent);
+router.get('/:authId', ensureAuthenticated, getStudent);
+router.put('/:authId', ensureAuthenticated, updateStudent);
+router.delete('/:authId', ensureAuthenticated, deleteStudent);
 
 //Preferences
-router.post("/preferences/", addPreference);
-router.put("/preferences/:studId", updatePreference);
-router.get("/preferences/:studId", getPreference);
+router.post("/preferences/", ensureAuthenticated, addPreference);
+router.put("/preferences/:studId", ensureAuthenticated, updatePreference);
+router.get("/preferences/:studId", ensureAuthenticated, getPreference);
 
-router.post("/shortlist", addToShortlist);
-router.get("/shortlist/:authId", getShortlistedSchools);
-router.get("/shortlist/count/:authId", getShortlistCount);
-router.post("/shortlist/remove",removeShortlist);
+router.post("/shortlist", ensureAuthenticated, addToShortlist);
+router.get("/shortlist/:authId", ensureAuthenticated, getShortlistedSchools);
+router.get("/shortlist/count/:authId", ensureAuthenticated, getShortlistCount);
+router.post("/shortlist/remove", ensureAuthenticated, removeShortlist);
 
-
- export default router;
+export default router;
