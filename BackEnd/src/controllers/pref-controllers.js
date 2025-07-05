@@ -57,7 +57,7 @@ export const getPreference = async (req, res) => {
       return res.status(404).json({ status: "Preference not found" });
     }
 
-    res.status(200).json({status:"success", message:"Preference updated successfully", data: preference});
+    res.status(200).json({status:"success", message:"Preference fetched successfully", data: preference});
   } catch (err) {
     res.status(500).json({status: "failed", message: err.message });
   }
