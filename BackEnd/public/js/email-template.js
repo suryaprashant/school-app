@@ -184,3 +184,59 @@ export const getLinkExpired = () => {
 </html>
 `
 };
+
+export const getOtpEmailTemplate = (otpCode) => {
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <title>Your OTP Code</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f6f9fc;
+          padding: 20px;
+        }
+        .container {
+          max-width: 600px;
+          margin: auto;
+          background-color: #ffffff;
+          padding: 30px;
+          border-radius: 8px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        h2 {
+          color: green;
+        }
+        .otp-code {
+          font-size: 24px;
+          font-weight: bold;
+          color: #333;
+          background-color: #f0f0f0;
+          padding: 12px 20px;
+          border-radius: 6px;
+          display: inline-block;
+          margin: 20px 0;
+          letter-spacing: 3px;
+        }
+        p.small {
+          font-size: 0.85rem;
+          color: #777;
+          margin-top: 30px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <h2>OTP Verification - TC-SA</h2>
+        <p>Hello,</p>
+        <p>Use the following One-Time Password (OTP) to proceed with your request:</p>
+        <div class="otp-code">${otpCode}</div>
+        <p class="small">This OTP is valid for 10 minutes. If you did not request this, please ignore this email.</p>
+        <p class="small">- The TC-SA Team</p>
+      </div>
+    </body>
+    </html>
+  `;
+};
