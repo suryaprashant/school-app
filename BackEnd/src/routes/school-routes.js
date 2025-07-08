@@ -5,6 +5,8 @@ import {addSchool, getSchoolById, getSchoolsByStatus,  updateSchoolInfo, deleteS
 import {addAmenities, getAmenitiesById, updateAmenities} from '../controllers/amenities-controllers.js';
 import {addActivities, getActivitiesById, updateActivities} from '../controllers/activities-controllers.js';
 import {addAlumni, getAlumniBySchool, deleteAlumniBySchool, updateAlumniBySchool} from '../controllers/alumni-controllers.js';
+import {searchSchool} from '../controllers/search-controllers.js';
+
 const router = express.Router();
 
 // Schools
@@ -29,5 +31,8 @@ router.post("/alumnus", ensureAuthenticated, addAlumni);
 router.get("/alumnus/:id", getAlumniBySchool);
 router.put("/alumnus/:id", ensureAuthenticated, updateAlumniBySchool);
 router.delete("/alumnus/:id", ensureAuthenticated, deleteAlumniBySchool);
+
+//Searching Schools
+router.get("/search", searchSchool);
 
 export default router;

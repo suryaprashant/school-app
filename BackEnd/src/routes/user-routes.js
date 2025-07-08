@@ -22,7 +22,6 @@ import {
   getShortlistCount,
 } from "../controllers/shortlist-controllers.js";
 
-
 const router = express.Router();
 
 //USER PROFILE
