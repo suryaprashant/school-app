@@ -1,17 +1,15 @@
-import Amenities from '../models/amenities-model.js';
+import {
+  addAmenitiesService,
+  getAmenitiesBySchoolIdService,
+  updateAmenitiesService
+} from '../services/amenities-services.js';
 
 //Add amenities
 export const addAmenities = async (req, res) => {
   try {
     const { schoolId, predefinedAmenities = [], customAmenities = [] } = req.body;
 
-    const addAmenities = new Amenities({
-    schoolId, 
-    predefinedAmenities,
-    customAmenities
-    });
-
-    await addAmenities.save();
+    const addAmenities = await addAmenitiesService({ schoolId, predefinedAmenities, customAmenities });
 
     res.status(201).json({ 
         status: "success",
@@ -29,7 +27,8 @@ export const getAmenitiesById = async (req, res) => {
   try {
      const {id: schoolId } = req.params;
 
-    const getAmenities = await Amenities.findOne({ schoolId });
+    const getAmenities = await getAmenitiesBySchoolIdService(schoolId);
+
 
     if (!getAmenities) {
       return res.status(404).json({
@@ -57,12 +56,7 @@ export const updateAmenities = async (req, res) => {
     const { id: schoolId } = req.params;
     const { predefinedAmenities = [], customAmenities = [] } = req.body;
 
-    const updatedAmenities = await Amenities.findOneAndUpdate(
-      {schoolId},                           
-      { predefinedAmenities, customAmenities },                
-      { new: true }                                           
-    );
-
+    const updatedAmenities =  await updateAmenitiesService(schoolId, predefinedAmenities, customAmenities);
     if (!updatedAmenities) {
       return res.status(404).json({
         status: 'fail',

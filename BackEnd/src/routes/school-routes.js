@@ -8,21 +8,21 @@ import {addAlumni, getAlumniBySchool, deleteAlumniBySchool, updateAlumniBySchool
 const router = express.Router();
 
 // Schools
-router.post('/schools/', ensureAuthenticated, addSchool);
-router.get('/schools/:status', getSchoolsByStatus);
+router.post('/schools/', addSchool);
+router.get('/schools/status/:status', getSchoolsByStatus);
 router.get('/schools/:id', getSchoolById);
-router.put('/schools/:id', ensureAuthenticated, updateSchoolInfo);
-router.delete('/schools/:id', ensureAuthenticated, deleteSchool);
+router.put('/schools/:id', updateSchoolInfo);
+router.delete('/schools/:id', deleteSchool);
 
 // Amenities
-router.post('/schools/amenities/', ensureAuthenticated, addAmenities);
+router.post('/schools/amenities/', addAmenities);
 router.get('/schools/amenities/:id', getAmenitiesById);
-router.put('/schools/amenities/:id', ensureAuthenticated, updateAmenities);
+router.put('/schools/amenities/:id', updateAmenities);
 
 // Activities
-router.post('/schools/activities/', ensureAuthenticated, addActivities);
+router.post('/schools/activities/', addActivities);
 router.get('/schools/activities/:id', getActivitiesById);
-router.put('/schools/activities/:id', ensureAuthenticated, updateActivities);
+router.put('/schools/activities/:id', updateActivities);
 
 //Alumni
 router.post("/alumnus", ensureAuthenticated, addAlumni);

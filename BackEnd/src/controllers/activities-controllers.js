@@ -1,21 +1,21 @@
-import Activities from '../models/activities-model.js';
+import {
+  addActivitiesService,
+  getActivitiesBySchoolIdService,
+  updateActivitiesService
+} from '../services/activities-services.js';
+
 
 //Add Activities
 export const addActivities = async (req, res) => {
   try {
     const { schoolId, activities } = req.body;
 
-    const addActivities = await Activities({
-    schoolId, 
-    activities
-    });
-
-    await addActivities.save();
+    const savedActivities = await addActivitiesService({ schoolId, activities });
 
     res.status(201).json({ 
         status: "success",
         message: 'Activities added successfully',
-        data: addActivities });
+        data: savedActivities });
   }
   catch (error) {
     res.status(500).json({ 
@@ -29,12 +29,13 @@ export const getActivitiesById = async (req, res) => {
   try {
     const { id: schoolId } = req.params;
 
-    const getActivities = await Activities.findOne({ schoolId });
+    const getActivities = await getActivitiesBySchoolIdService(schoolId);
 
     if (!getActivities) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         status: 'fail',
-        message: 'No activities found' });
+        message: 'No activities found'
+      });
     }
 
     res.status(200).json({
@@ -56,11 +57,7 @@ export const updateActivities = async (req, res) => {
     const { id: schoolId } = req.params;
     const { activities } = req.body;
 
-    const updatedActivities = await Activities.findOneAndUpdate(
-      {schoolId},                           
-      {activities},                
-      { new: true }                                           
-    );
+    const updatedActivities = await updateActivitiesService(schoolId, activities);
 
     if (!updatedActivities) {
       return res.status(404).json({

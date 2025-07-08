@@ -9,7 +9,6 @@ const ActivitiesSchema = new mongoose.Schema({
    },
   activities: [{
     type: String,
-    default:"",
     enum: [
   'Focusing on Academics',
   'Focuses on Practical Learning',

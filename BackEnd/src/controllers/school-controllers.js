@@ -1,17 +1,16 @@
-import School from '../models/school-model.js';
+import {
+  addSchoolService,
+  getSchoolByIdService,
+  getSchoolsByStatusService,
+  updateSchoolInfoService,
+  deleteSchoolService
+} from '../services/school-services.js';
 
 //Add school
 export const addSchool = async (req, res) => {
   try {
-    const {
-      name, description, board, state, city, schoolMode, genderType, shifts, feeRange, upto, email, mobileNo, specialist, tags, website, status
-    } = req.body;
-
-    const school = new School({
-       name, description, board, state, city, schoolMode, genderType, shifts, feeRange, upto, email, mobileNo, specialist, tags, website, status
-    });
-
-    const saveSchool = await school.save();
+    
+    const saveSchool = await addSchoolService(req.body);
 
      res.status(201).json({
       status: "success",
@@ -29,16 +28,8 @@ export const addSchool = async (req, res) => {
 // Get school by Id 
 export const getSchoolById = async (req, res) => {
   try {
-     const {id: schoolId } = req.params;
 
-    const school = await School.findById(schoolId);
-
-    if (!school) {
-      return res.status(404).json({
-        status: 'fail',
-        message: 'School not found'
-      });
-    }
+    const school = await getSchoolByIdService(req.params.id);
 
     res.status(200).json({
       status: 'success',
@@ -56,24 +47,10 @@ export const getSchoolById = async (req, res) => {
 //Get school by status
 export const getSchoolsByStatus = async (req, res) => {
   try {
-    const { status } = req.params;
 
-    const allowedStatus = ['pending', 'accepted', 'rejected'];
-    if (!allowedStatus.includes(status)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid status. Must be pending, accepted, or rejected.'
-      });
-    }
+    const { status } = req.params; 
 
-    const schools = await School.find({ status });
-
-    if (schools.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: `No schools found with status: ${status}`
-      });
-    }
+    const schools = await getSchoolsByStatusService(status);
 
     res.status(200).json({
       success: true,
@@ -91,18 +68,8 @@ export const getSchoolsByStatus = async (req, res) => {
 //Update school info 
 export const updateSchoolInfo = async (req, res) => {
   try {
-  const {id: schoolId } = req.params;
-  const updatedData = req.body;
 
-    
-    const updatedSchool = await School.findByIdAndUpdate(schoolId, updatedData, {
-      new: true,
-      runValidators: true
-    });
-
-    if (!updatedSchool) {
-      return res.status(404).json({ message: 'School not found' });
-    }
+  const updatedSchool = await updateSchoolInfoService(req.params.id, req.body);
 
     res.status(200).json({ 
         status: "success",
@@ -120,13 +87,8 @@ export const updateSchoolInfo = async (req, res) => {
 //Delete school 
 export const deleteSchool = async (req, res) => {
   try {
-    const {id: schoolId } = req.params;
-
-    const deletedSchool = await School.findByIdAndDelete(schoolId);
-
-    if (!deletedSchool) {
-      return res.status(404).json({ message: "School not found" });
-    }
+    
+   const deletedSchool = await deleteSchoolService(req.params.id);
 
     res.status(200).json({
       status: "success",
