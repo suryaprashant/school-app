@@ -1,40 +1,24 @@
-import Student from "../models/user-model.js";
-import School from "../models/school-model.js";
-import mongoose from "mongoose";
+import {
+  addToShortlistService,
+  getShortlistedSchoolsService,
+  removeShortlistService,
+  getShortlistCountService,
+} from "../services/shortlist-services.js";
 
 // ✅ Add School to Shortlist
 export const addToShortlist = async (req, res) => {
   try {
     const { authId, schoolId } = req.body;
 
-    if (!authId || !schoolId) {
-      return res.status(400).json({ status:"failed", message: "authId and schoolId are required" });
-    }
-
-    const student = await Student.findOne({ authId: new mongoose.Types.ObjectId(authId) });
-    if (!student) {
-      return res.status(404).json({ status:"failed", message: "Student not found" });
-    }
-      
-    const school = await School.findById(schoolId);
-    if (!school) {
-      return res.status(404).json({ status:"failed", message: "School not found" });
-    }
-
-    if (student.shortlistedSchools.includes(schoolId)) {
-      return res.status(400).json({ status:"failed", message: "School already in shortlist" });
-    }
-
-    student.shortlistedSchools.push(schoolId);
-    await student.save();
+    const data = await addToShortlistService({ authId, schoolId });
 
     res.status(200).json({
-      status:"success", 
+      status: "success",
       message: "School added to shortlist",
-      data: student.shortlistedSchools,
+      data,
     });
   } catch (error) {
-    res.status(500).json({ status:"failed", message: error.message});
+    res.status(400).json({ status: "failed", message: error.message });
   }
 };
 
@@ -43,18 +27,15 @@ export const getShortlistedSchools = async (req, res) => {
   try {
     const { authId } = req.params;
 
-    const student = await Student.findOne({ authId }).populate("shortlistedSchools");
-    if (!student) {
-      return res.status(404).json({ status: "failed", message: "Student not found" });
-    }
+    const data = await getShortlistedSchoolsService(authId);
 
     res.status(200).json({
-      status: "success", 
+      status: "success",
       message: "Shortlisted schools retrieved",
-      data: student.shortlistedSchools,
+      data,
     });
   } catch (error) {
-    res.status(500).json({ status: "failed", message: error.message });
+    res.status(400).json({ status: "failed", message: error.message });
   }
 };
 
@@ -62,31 +43,16 @@ export const getShortlistedSchools = async (req, res) => {
 export const removeShortlist = async (req, res) => {
   try {
     const { authId, schoolId } = req.body;
-    if (!authId || !schoolId) {
-      return res.status(400).json({ status: "failed", message: "authId and schoolId are required" });
-    }
- 
-    const student = await Student.findOne({ authId: new mongoose.Types.ObjectId(authId) });
 
-    if (!student) {
-      return res.status(404).json({ status: "failed", message: "Student not found" });
-    }
-
-
-    // Remove the school from the array
-    student.shortlistedSchools = student.shortlistedSchools.filter(
-      (id) => id.toString() !== schoolId
-    );
-
-    await student.save();
+    const data = await removeShortlistService({ authId, schoolId });
 
     res.status(200).json({
-      status: "success", 
+      status: "success",
       message: "School removed from shortlist",
-      data: student.shortlistedSchools,
+      data,
     });
   } catch (error) {
-    res.status(500).json({ status: "failed", message: error.message });
+    res.status(400).json({ status: "failed", message: error.message });
   }
 };
 
@@ -95,14 +61,14 @@ export const getShortlistCount = async (req, res) => {
   try {
     const { authId } = req.params;
 
-    const student = await Student.findOne({ authId });
-    if (!student) {
-      return res.status(404).json({ status: "failed", message: "Student not found" });
-    }
+    const data = await getShortlistCountService(authId);
 
-    const count = student.shortlistedSchools.length;
-    res.status(200).json({ status: "success", message: "Shortlist count retrieved", data: count });
+    res.status(200).json({
+      status: "success",
+      message: "Shortlist count retrieved",
+      data,
+    });
   } catch (error) {
-    res.status(500).json({ status: "failed", message: error.message });
+    res.status(400).json({ status: "failed", message: error.message });
   }
 };
