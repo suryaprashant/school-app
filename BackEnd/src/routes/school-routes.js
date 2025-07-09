@@ -7,6 +7,8 @@ import {addActivities, getActivitiesById, updateActivities} from '../controllers
 import {addAlumni, getAlumniBySchool, deleteAlumniBySchool, updateAlumniBySchool} from '../controllers/alumni-controllers.js';
 import {searchSchool} from '../controllers/search-controllers.js';
 import { compareSchools } from "../controllers/compare-controllers.js";
+import {getSchoolByFeeRange, getSchoolByShift } from '../controllers/filter-controllers.js';
+
 const router = express.Router();
 
 // Schools
@@ -34,7 +36,8 @@ router.delete("/alumnus/:id", ensureAuthenticated, deleteAlumniBySchool);
 
 //Searching Schools
 router.get("/search", searchSchool);
-
 router.post("/compare", compareSchools);
+router.get('/filter-feeRange', getSchoolByFeeRange);
+router.get('/filter-Shift', getSchoolByShift);
 
 export default router;

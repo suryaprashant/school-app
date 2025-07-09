@@ -18,7 +18,7 @@ export const addAmenities = async (req, res) => {
 
   } catch (error) {
     res.status(500).json({ 
-    status: 'Failed to add amenities', 
+    status: 'Failed', 
     message: error.message });
   }
 };
@@ -44,7 +44,7 @@ export const getAmenitiesById = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
-      status: 'Failed to fetch Amenities',
+      status: 'Failed',
       message: error.message
     });
   }
@@ -71,7 +71,7 @@ export const updateAmenities = async (req, res) => {
 
   } catch (error) {
     res.status(500).json({ 
-    status: 'Failed to update amenities', 
+    status: 'Failed', 
     message: error.message });
   }
 };
