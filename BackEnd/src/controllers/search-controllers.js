@@ -1,4 +1,3 @@
-import { searchSchoolsService } from "../services/search-services.js";
 
 export const searchSchool = async (req, res) => {
 
