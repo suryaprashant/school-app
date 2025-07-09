@@ -20,6 +20,6 @@ export const updateAmenitiesService = async (schoolId, predefinedAmenities, cust
   return await Amenities.findOneAndUpdate(
     { schoolId },
     { predefinedAmenities, customAmenities },
-    { new: true, runValidators: true }  // 👈 Important for schema validation
+    { new: true, runValidators: true }  
   );
 };

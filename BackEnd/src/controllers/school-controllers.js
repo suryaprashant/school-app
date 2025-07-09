@@ -18,8 +18,8 @@ export const addSchool = async (req, res) => {
       data: saveSchool
     });
   } catch (error) {
-    res.status(400).json({ 
-    status: 'Failed to add school', 
+    res.status(500).json({ 
+    status: 'Failed', 
     message: error.message });
   }
    
@@ -38,7 +38,7 @@ export const getSchoolById = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
-      status: 'Failed to fetch school',
+      status: 'Failed',
       message: error.message
     });
   }
@@ -53,13 +53,13 @@ export const getSchoolsByStatus = async (req, res) => {
     const schools = await getSchoolsByStatusService(status);
 
     res.status(200).json({
-      success: true,
+      status: 'success',
       message: `Fetched schools with status: ${status}`,
       data: schools
     });
   } catch (error) {
     res.status(500).json({
-      status: 'Error while fetching schools by status',
+      status: 'Failed',
       message: error.message
     });
   }
@@ -77,8 +77,8 @@ export const updateSchoolInfo = async (req, res) => {
         data: updatedSchool 
     });
   } catch (error) {
-    res.status(400).json({ 
-        status: 'Failed to update school info', 
+    res.status(500).json({ 
+        status: 'Failed', 
         message: error.message 
     });
   }
@@ -96,8 +96,8 @@ export const deleteSchool = async (req, res) => {
       data: deletedSchool
     });
   } catch (error) {
-    res.status(400).json({
-      status: "Failed to delete school",
+    res.status(500).json({
+      status: "Failed",
       message: error.message
     });
   }

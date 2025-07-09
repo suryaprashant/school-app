@@ -19,7 +19,7 @@ export const addActivities = async (req, res) => {
   }
   catch (error) {
     res.status(500).json({ 
-    status: 'Failed to add activities', 
+    status: 'Failed', 
     message: error.message });
   } 
 };
@@ -45,7 +45,7 @@ export const getActivitiesById = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
-      status: 'Failed to fetch Activities',
+      status: 'Failed',
       message: error.message
     });
   }
@@ -73,7 +73,7 @@ export const updateActivities = async (req, res) => {
 
   } catch (error) {
     res.status(500).json({ 
-    status: 'Failed to update activities ', 
+    status: 'Failed', 
     message: error.message });
   }
 };
