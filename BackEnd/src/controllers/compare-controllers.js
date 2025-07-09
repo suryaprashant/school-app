@@ -12,6 +12,6 @@ export const compareSchools = async (req, res) => {
 
     res.status(200).json({ status: "success", data: comparison });
   } catch (err) {
-    res.status(500).json({ status: "failed", message: err.message });
+    res.status(err.status||500).json({ status: "failed", message: err.message });
   }
 };

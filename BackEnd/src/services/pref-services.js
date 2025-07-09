@@ -7,7 +7,7 @@ export const addPreferenceService = async (data) => {
 
   const existing = await Preference.findOne({ studentId });
   if (existing) {
-    throw new Error("Preference already exists for this student");
+    throw {status:400, message:"Preference already exists for this student"};
   }
 
   const newPref = new Preference(data);
@@ -23,7 +23,7 @@ export const updatePreferenceService = async (studId, updates) => {
   );
 
   if (!updated) {
-    throw new Error("Preference not found for this student");
+    throw {status:400, message:"Preference not found for this student"};
   }
 
   return updated;
@@ -34,7 +34,7 @@ export const getPreferenceService = async (studId) => {
   const preference = await Preference.findOne({ studentId: studId }).populate("studentId");
 
   if (!preference) {
-    throw new Error("Preference not found");
+    throw {status:400, message:"Preference not found"};
   }
 
   return preference;

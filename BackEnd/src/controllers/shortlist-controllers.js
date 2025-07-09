@@ -18,7 +18,7 @@ export const addToShortlist = async (req, res) => {
       data,
     });
   } catch (error) {
-    res.status(400).json({ status: "failed", message: error.message });
+    res.status(error.status||500).json({ status: "failed", message: error.message });
   }
 };
 
@@ -35,7 +35,7 @@ export const getShortlistedSchools = async (req, res) => {
       data,
     });
   } catch (error) {
-    res.status(400).json({ status: "failed", message: error.message });
+    res.status(error.status||500).json({ status: "failed", message: error.message });
   }
 };
 
@@ -52,7 +52,7 @@ export const removeShortlist = async (req, res) => {
       data,
     });
   } catch (error) {
-    res.status(400).json({ status: "failed", message: error.message });
+    res.status(error.status||500).json({ status: "failed", message: error.message });
   }
 };
 
@@ -69,6 +69,6 @@ export const getShortlistCount = async (req, res) => {
       data,
     });
   } catch (error) {
-    res.status(400).json({ status: "failed", message: error.message });
+    res.status(error.status||500).json({ status: "failed", message: error.message });
   }
 };

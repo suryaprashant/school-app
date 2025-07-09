@@ -6,7 +6,7 @@ export const addAlumniService = async (data) => {
 
   const existing = await Alumni.findOne({ schoolId });
   if (existing) {
-    throw new Error("Alumni data already exists for this school");
+    throw {status:400, message:"Alumni data already exists for this school"};
   }
 
   const newAlumni = new Alumni(data);
@@ -18,7 +18,7 @@ export const getAlumniBySchoolService = async (schoolId) => {
   const alumni = await Alumni.findOne({ schoolId }).populate("schoolId");
 
   if (!alumni) {
-    throw new Error("No alumni data found for this school");
+    throw {status:400, message:"No alumni data found for this school"};
   }
 
   return alumni;
@@ -33,7 +33,7 @@ export const updateAlumniBySchoolService = async (schoolId, updates) => {
   );
 
   if (!updatedAlumni) {
-    throw new Error("No alumni data found to update for this school");
+    throw {status:400, message:"No alumni data found to update for this school"};
   }
 
   return updatedAlumni;
@@ -44,7 +44,7 @@ export const deleteAlumniBySchoolService = async (schoolId) => {
   const deleted = await Alumni.findOneAndDelete({ schoolId });
 
   if (!deleted) {
-    throw new Error("No alumni data found to delete for this school");
+    throw {status:400, message:"No alumni data found to delete for this school"}
   }
 
   return deleted;

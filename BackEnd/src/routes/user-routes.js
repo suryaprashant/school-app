@@ -31,9 +31,9 @@ router.put('/:authId', ensureAuthenticated, updateStudent);
 router.delete('/:authId', ensureAuthenticated, deleteStudent);
 
 //Preferences
-router.post("/preferences/", ensureAuthenticated, addPreference);
-router.put("/preferences/:studId", ensureAuthenticated, updatePreference);
-router.get("/preferences/:studId", ensureAuthenticated, getPreference);
+router.post("/preferences/",  addPreference);
+router.put("/preferences/:studId",  updatePreference);
+router.get("/preferences/:studId",  getPreference);
 
 router.post("/shortlist", ensureAuthenticated, addToShortlist);
 router.get("/shortlist/:authId", ensureAuthenticated, getShortlistedSchools);

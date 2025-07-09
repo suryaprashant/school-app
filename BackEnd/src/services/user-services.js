@@ -6,7 +6,7 @@ export const addStudentService = async (data) => {
 
   const existingStudent = await Student.findOne({ authId });
   if (existingStudent) {
-    throw new Error("Student Already Exists");
+    throw {status:400, message:"Student Already Exists"};
   }
 
   const newStudent = new Student(data);
@@ -22,7 +22,7 @@ export const updateStudentService = async (authId, updates) => {
   );
 
   if (!updatedStudent) {
-    throw new Error("Student Not Found");
+    throw {status:400, message:"Student Not Found"};
   }
 
   return updatedStudent;
@@ -33,7 +33,7 @@ export const deleteStudentService = async (authId) => {
   const deletedStudent = await Student.findOneAndDelete({ authId });
 
   if (!deletedStudent) {
-    throw new Error("Student Not Found");
+     throw {status:400, message:"Student Not Found"};
   }
 
   return deletedStudent;
@@ -44,7 +44,7 @@ export const getStudentService = async (authId) => {
   const student = await Student.findOne({ authId });
 
   if (!student) {
-    throw new Error("Student Not Found");
+    throw {status:400, message:"Student Not Found"};
   }
 
   return student;

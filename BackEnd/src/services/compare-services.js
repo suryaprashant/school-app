@@ -9,7 +9,7 @@ export const compareSchoolsService = async (schoolId1, schoolId2) => {
   ]);
 
   if (!school1 || !school2) {
-    throw new Error("One or both schools not found");
+    throw{status:400, message:"One or both schools not found"};
   }
 
   const [amenities1, amenities2] = await Promise.all([

@@ -15,7 +15,7 @@ export const addStudent = async (req, res) => {
       data,
     });
   } catch (err) {
-    res.status(400).json({ status: "failed", message: err.message });
+    res.status(error.status||500).json({ status: "failed", message: err.message });
   }
 };
 
@@ -33,7 +33,7 @@ export const updateStudent = async (req, res) => {
       data: { student: data },
     });
   } catch (err) {
-    res.status(400).json({ status: "failed", message: err.message });
+    res.status(error.status||500).json({ status: "failed", message: err.message });
   }
 };
 
@@ -49,7 +49,7 @@ export const deleteStudent = async (req, res) => {
       message: "Student deleted successfully",
     });
   } catch (err) {
-    res.status(400).json({ status: "failed", message: err.message });
+    res.status(error.status||500).json({ status: "failed", message: err.message });
   }
 };
 
@@ -66,6 +66,6 @@ export const getStudent = async (req, res) => {
       data,
     });
   } catch (err) {
-    res.status(400).json({ status: "failed", message: err.message });
+    res.status(error.status||500).json({ status: "failed", message: err.message });
   }
 };

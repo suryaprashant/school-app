@@ -5,21 +5,21 @@ import mongoose from "mongoose";
 // ✅ Add School to Shortlist
 export const addToShortlistService = async ({ authId, schoolId }) => {
   if (!authId || !schoolId) {
-    throw new Error("authId and schoolId are required");
+     throw {status:400, message:"authId and schoolId are required"};
   }
 
   const student = await Student.findOne({ authId: new mongoose.Types.ObjectId(authId) });
   if (!student) {
-    throw new Error("Student not found");
+    throw {status:400, message:"Student not found"};
   }
 
   const school = await School.findById(schoolId);
   if (!school) {
-    throw new Error("School not found");
+     throw {status:400, message:"School not found"};
   }
 
   if (student.shortlistedSchools.includes(schoolId)) {
-    throw new Error("School already in shortlist");
+    throw {status:400, message:"School already in shortlist"};
   }
 
   student.shortlistedSchools.push(schoolId);
@@ -32,7 +32,7 @@ export const addToShortlistService = async ({ authId, schoolId }) => {
 export const getShortlistedSchoolsService = async (authId) => {
   const student = await Student.findOne({ authId }).populate("shortlistedSchools");
   if (!student) {
-    throw new Error("Student not found");
+    throw {status:400, message:"Student not found"};
   }
 
   return student.shortlistedSchools;
@@ -41,12 +41,12 @@ export const getShortlistedSchoolsService = async (authId) => {
 // ✅ Remove School from Shortlist
 export const removeShortlistService = async ({ authId, schoolId }) => {
   if (!authId || !schoolId) {
-    throw new Error("authId and schoolId are required");
+    throw {status:400, message:"authId and schoolId are required"};
   }
 
   const student = await Student.findOne({ authId: new mongoose.Types.ObjectId(authId) });
   if (!student) {
-    throw new Error("Student not found");
+    throw {status:400, message:"Student not found"};
   }
 
   student.shortlistedSchools = student.shortlistedSchools.filter(
@@ -61,7 +61,7 @@ export const removeShortlistService = async ({ authId, schoolId }) => {
 export const getShortlistCountService = async (authId) => {
   const student = await Student.findOne({ authId });
   if (!student) {
-    throw new Error("Student not found");
+    throw {status:400, message:"Student not found"};
   }
 
   return student.shortlistedSchools.length;

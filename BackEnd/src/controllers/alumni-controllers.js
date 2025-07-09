@@ -15,7 +15,7 @@ export const addAlumni = async (req, res) => {
       data,
     });
   } catch (err) {
-    res.status(400).json({ status: "failed", message: err.message });
+    res.status(err.status||500).json({ status: "failed", message: err.message });
   }
 };
 
@@ -29,7 +29,7 @@ export const getAlumniBySchool = async (req, res) => {
       data,
     });
   } catch (err) {
-    res.status(400).json({ status: "failed", message: err.message });
+    res.status(err.status||500).json({ status: "failed", message: err.message });
   }
 };
 
@@ -47,7 +47,7 @@ export const updateAlumniBySchool = async (req, res) => {
       data,
     });
   } catch (err) {
-    res.status(400).json({ status: "failed", message: err.message });
+    res.status(err.status||500).json({ status: "failed", message: err.message });
   }
 };
 
@@ -63,6 +63,6 @@ export const deleteAlumniBySchool = async (req, res) => {
       message: "Alumni data deleted successfully",
     });
   } catch (err) {
-    res.status(400).json({ status: "failed", message: err.message });
+    res.status(err.status||500).json({ status: "failed", message: err.message });
   }
 };

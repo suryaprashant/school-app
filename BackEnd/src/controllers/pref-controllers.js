@@ -10,7 +10,7 @@ export const addPreference = async (req, res) => {
     const data = await addPreferenceService(req.body);
     res.status(201).json({ status: "success", message: "Preference added successfully", data });
   } catch (err) {
-    res.status(400).json({ status: "failed", message: err.message });
+    res.status(err.status||500).json({ status: "failed", message: err.message });
   }
 };
 
@@ -23,7 +23,7 @@ export const updatePreference = async (req, res) => {
     const data = await updatePreferenceService(studId, updates);
     res.status(200).json({ status: "success", message: "Preference updated successfully", data });
   } catch (err) {
-    res.status(400).json({ status: "failed", message: err.message });
+    res.status(err.status||500).json({ status: "failed", message: err.message });
   }
 };
 
@@ -35,6 +35,6 @@ export const getPreference = async (req, res) => {
     const data = await getPreferenceService(studId);
     res.status(200).json({ status: "success", message: "Preference fetched successfully", data });
   } catch (err) {
-    res.status(400).json({ status: "failed", message: err.message });
+    res.status(err.status||500).json({ status: "failed", message: err.message });
   }
 };
