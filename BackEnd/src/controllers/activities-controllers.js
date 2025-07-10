@@ -33,7 +33,7 @@ export const getActivitiesById = async (req, res) => {
 
     if (!getActivities) {
       return res.status(404).json({
-        status: 'fail',
+        status: 'failed',
         message: 'No activities found'
       });
     }
@@ -61,7 +61,7 @@ export const updateActivities = async (req, res) => {
 
     if (!updatedActivities) {
       return res.status(404).json({
-        status: 'fail',
+        status: 'failed',
         message: 'activities not found for this school. Please add them first.'
       });
     }
