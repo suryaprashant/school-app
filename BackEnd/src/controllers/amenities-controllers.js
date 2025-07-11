@@ -32,7 +32,7 @@ export const getAmenitiesById = async (req, res) => {
 
     if (!getAmenities) {
       return res.status(404).json({
-        status: 'fail',
+        status: 'failed',
         message: 'Amenities not found'
       });
     }
@@ -59,7 +59,7 @@ export const updateAmenities = async (req, res) => {
     const updatedAmenities =  await updateAmenitiesService(schoolId, predefinedAmenities, customAmenities);
     if (!updatedAmenities) {
       return res.status(404).json({
-        status: 'fail',
+        status: 'failed',
         message: 'Amenities not found for this school. Please add them first.'
       });
     }

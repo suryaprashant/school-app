@@ -6,7 +6,7 @@ export const getSchoolByFeeRange = async (req, res) => {
 
     if (!feeRange) {
       return res.status(400).json({
-        status: "fail",
+        status: "failed",
         message: "feeRange query parameter is required"
       });
     }
@@ -33,7 +33,7 @@ export const getSchoolByShift = async (req, res) => {
 
  if (!shifts) {
       return res.status(400).json({
-        status: "fail",
+        status: "failed",
         message: "Shift query parameter is required"
       });
     }
@@ -41,7 +41,7 @@ export const getSchoolByShift = async (req, res) => {
     
  if (!schools || schools.length === 0) {
       return res.status(404).json({
-        status: "fail",
+        status: "failed",
         message: `No schools found for shift: ${shifts}`
       });
     }
