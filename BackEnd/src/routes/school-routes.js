@@ -8,6 +8,7 @@ import {addAlumni, getAlumniBySchool, deleteAlumniBySchool, updateAlumniBySchool
 import {searchSchool} from '../controllers/search-controllers.js';
 import { compareSchools } from "../controllers/compare-controllers.js";
 import {getSchoolByFeeRange, getSchoolByShift } from '../controllers/filter-controllers.js';
+import { getSchoolCardData } from "../controllers/card-controllers.js";
 import {addSupport, getSupportByStudId, getSupportBySupId ,deleteSupportBySupId} from '../controllers/support-controllers.js';
 
 const router = express.Router();
@@ -40,6 +41,8 @@ router.get("/search", searchSchool);
 router.post("/compare", compareSchools);
 router.get('/filter-feeRange', getSchoolByFeeRange);
 router.get('/filter-Shift', getSchoolByShift);
+
+router.get("/card/:id", getSchoolCardData);
 
 router.post('/support', ensureAuthenticated, addSupport);
 router.get('/support/:studId', getSupportByStudId);
