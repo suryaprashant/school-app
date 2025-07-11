@@ -8,6 +8,7 @@ import {addAlumni, getAlumniBySchool, deleteAlumniBySchool, updateAlumniBySchool
 import {searchSchool} from '../controllers/search-controllers.js';
 import { compareSchools } from "../controllers/compare-controllers.js";
 import {getSchoolByFeeRange, getSchoolByShift } from '../controllers/filter-controllers.js';
+import {addSupport, getSupportByStudId, getSupportBySupId ,deleteSupportBySupId} from '../controllers/support-controllers.js';
 
 const router = express.Router();
 
@@ -39,5 +40,10 @@ router.get("/search", searchSchool);
 router.post("/compare", compareSchools);
 router.get('/filter-feeRange', getSchoolByFeeRange);
 router.get('/filter-Shift', getSchoolByShift);
+
+router.post('/support', ensureAuthenticated, addSupport);
+router.get('/support/:studId', getSupportByStudId);
+router.get('/support-id/:supportId', getSupportBySupId);  
+router.delete('/support/:supportId',ensureAuthenticated, deleteSupportBySupId);
 
 export default router;
