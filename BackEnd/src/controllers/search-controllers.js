@@ -1,3 +1,4 @@
+import {searchSchoolsService} from '../services/search-services.js';
 
 export const searchSchool = async (req, res) => {
 
@@ -10,7 +11,7 @@ export const searchSchool = async (req, res) => {
     const result = await searchSchoolsService({ search, boards, cities, state, page, limit });
 
     if (!result.data.length) {
-      return res.status(404).json({ message: "No schools found for the given search." });
+      return res.status(404).json({ status: "failed", message: "No schools found for the given search." });
     }
 
     res.status(200).json({
