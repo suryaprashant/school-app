@@ -10,7 +10,7 @@ import { compareSchools } from "../controllers/compare-controllers.js";
 import {getSchoolByFeeRange, getSchoolByShift } from '../controllers/filter-controllers.js';
 import { getSchoolCardData } from "../controllers/card-controllers.js";
 import {addSupport, getSupportByStudId, getSupportBySupId ,deleteSupportBySupId} from '../controllers/support-controllers.js';
-
+import { predictSchools } from "../controllers/predictor-controllers.js";
 const router = express.Router();
 
 // Schools
@@ -48,5 +48,7 @@ router.post('/support', ensureAuthenticated, addSupport);
 router.get('/support/:studId', getSupportByStudId);
 router.get('/support-id/:supportId', getSupportBySupId);  
 router.delete('/support/:supportId',ensureAuthenticated, deleteSupportBySupId);
+
+router.post('/predict-schools', predictSchools);
 
 export default router;
