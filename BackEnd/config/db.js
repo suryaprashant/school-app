@@ -1,6 +1,8 @@
 // connectDB.js
 import mongoose from "mongoose";
 import config from "config";
+import dotenv from 'dotenv';
+dotenv.config();
 
 const mongodbUrl = config.get("mongodb.url");
 
