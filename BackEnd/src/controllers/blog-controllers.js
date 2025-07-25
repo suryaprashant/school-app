@@ -2,7 +2,7 @@ import {
   createBlogService,
   getAllBlogsService,
   getBlogByIdService,
-} from "../services/blog-service.js";
+} from "../services/blog-services.js";
 
 // POST /blogs
 export const createBlog = async (req, res) => {
