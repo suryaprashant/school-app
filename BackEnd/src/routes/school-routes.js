@@ -11,6 +11,11 @@ import {getSchoolByFeeRange, getSchoolByShift } from '../controllers/filter-cont
 import { getSchoolCardData } from "../controllers/card-controllers.js";
 import {addSupport, getSupportByStudId, getSupportBySupId ,deleteSupportBySupId} from '../controllers/support-controllers.js';
 import { predictSchools } from "../controllers/predictor-controllers.js";
+import {
+  createBlog,
+  getAllBlogs,
+  getBlogById,
+} from "../controllers/blog-controllers.js";
 const router = express.Router();
 
 // Schools
@@ -50,5 +55,9 @@ router.get('/support-id/:supportId', getSupportBySupId);
 router.delete('/support/:supportId',ensureAuthenticated, deleteSupportBySupId);
 
 router.post('/predict-schools', predictSchools);
+
+router.post("/blogs", createBlog);
+router.get("/blogs", getAllBlogs);
+router.get("/blogs/:id", getBlogById);
 
 export default router;

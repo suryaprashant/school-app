@@ -35,9 +35,9 @@ router.post("/preferences/",  addPreference);
 router.put("/preferences/:studId",  updatePreference);
 router.get("/preferences/:studId",  getPreference);
 
-router.post("/shortlist", ensureAuthenticated, addToShortlist);
-router.get("/shortlist/:authId", ensureAuthenticated, getShortlistedSchools);
-router.get("/shortlist/count/:authId", ensureAuthenticated, getShortlistCount);
-router.post("/shortlist/remove", ensureAuthenticated, removeShortlist);
+router.post("/shortlist",  addToShortlist);
+router.get("/shortlist/:authId",  getShortlistedSchools);
+router.get("/shortlist/count/:authId", getShortlistCount);
+router.post("/shortlist/remove", removeShortlist);
 
 export default router;
