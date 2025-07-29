@@ -52,6 +52,8 @@ const SchoolSchema = new mongoose.Schema({
   tags:{ type: [String],required: false},
   website: { type: String, required: false },
   status:{ type: String, required: true, enum: ['pending', 'rejected', 'accepted'] ,default: "pending" },
+  languageMedium: { type: [String], required: true },
+  transportAvailable: { type: String, required: true ,enum: ['yes', 'no']},
   //image: { type: String, required: true }, 
   //logo: { type: String, required: true },
   //banner: { type: String, required: true },
