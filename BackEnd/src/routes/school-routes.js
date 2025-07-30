@@ -16,6 +16,7 @@ import {
   getAllBlogs,
   getBlogById,
 } from "../controllers/blog-controllers.js";
+
 const router = express.Router();
 
 // Schools
