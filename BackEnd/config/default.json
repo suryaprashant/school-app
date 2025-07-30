@@ -1,5 +1,5 @@
 {
   "mongodb": {
-    "url": "mongodb://localhost:27017/yourDB" 
+    "url": "mongodb+srv://talentconnect2025:talentconnect%402025@talentconnect.823mm.mongodb.net/?retryWrites=true&w=majority&appName=TalentConnect"
   }
 }

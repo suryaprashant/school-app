@@ -1,4 +1,5 @@
 import School from '../models/school-model.js';
+import { parseFeeRange } from '../utils/fee-parsing.js';
 
 export const getSchoolsByFeeRange = async (feeRange) => {
   const { min, max } = parseFeeRange(feeRange);
@@ -15,6 +16,7 @@ export const getSchoolsByFeeRange = async (feeRange) => {
 
   return matched;
 };
+
 
 export const getSchoolsByShift = async (shifts) => {
   return await School.find({ shifts });
