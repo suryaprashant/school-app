@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-//mongodb://localhost:27017/yourDB
+
 const StudentApplicationSchema = new mongoose.Schema({
 
   studId: { type: mongoose.Schema.Types.ObjectId, ref: 'Student', required: true },
