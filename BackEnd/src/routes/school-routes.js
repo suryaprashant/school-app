@@ -1,5 +1,4 @@
 import express from "express";
-
 import ensureAuthenticated from "../middlewares/validate-token-middleware.js";
 import {addSchool, getSchoolById, getSchoolsByStatus,  updateSchoolInfo, deleteSchool} from '../controllers/school-controllers.js';
 import {addAmenities, getAmenitiesById, updateAmenities} from '../controllers/amenities-controllers.js';
@@ -16,7 +15,6 @@ import {
   getAllBlogs,
   getBlogById,
 } from "../controllers/blog-controllers.js";
-
 const router = express.Router();
 
 // Schools
