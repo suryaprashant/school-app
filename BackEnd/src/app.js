@@ -1,4 +1,4 @@
-import express from "express";
+import express from 'express';
 import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "../config/db.js";
@@ -25,7 +25,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/admin', schoolRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/reviews', reviewRoutes);
-app.use('/api/forms', formRoutes);
+app.use('/api/form', formRoutes);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

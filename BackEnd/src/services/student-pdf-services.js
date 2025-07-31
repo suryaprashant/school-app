@@ -1,4 +1,4 @@
-import StudentPdf from "../models/studentPdf-model.js";
+import StudentPdf from "../models/student-pdf-model.js";
 import { generateStudentPDFBuffer } from "../utils/pdf-generator.js";
 import { getStudApplicationsById } from "./application-services.js"; // adjust path if needed
 

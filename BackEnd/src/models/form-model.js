@@ -12,7 +12,8 @@ const FormSchema = new mongoose.Schema({
         required: true,
     },
     applicationForm: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'pdfs',
         required: true,
     }, //PDF for the form
     status: {

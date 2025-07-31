@@ -1,5 +1,5 @@
 import { generateStudentPDFBuffer } from "../utils/pdf-generator.js";
-import { saveStudentPdf, getStudentPdf, getStudentPDFBuffer } from "../services/studentPdf-services.js";
+import { saveStudentPdf, getStudentPdf, getStudentPDFBuffer } from "../services/student-pdf-services.js";
 import { getStudApplicationsById } from "../services/application-services.js"; // Make sure this path is correct
 
 export const generateAndSaveStudentPdf = async (req, res) => {
