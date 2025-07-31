@@ -1,5 +1,4 @@
 import express from "express";
-
 import ensureAuthenticated from "../middlewares/validate-token-middleware.js";
 import {addSchool, getSchoolById, getSchoolsByStatus,  updateSchoolInfo, deleteSchool} from '../controllers/school-controllers.js';
 import {addAmenities, getAmenitiesById, updateAmenities} from '../controllers/amenities-controllers.js';
@@ -10,7 +9,12 @@ import { compareSchools } from "../controllers/compare-controllers.js";
 import {getSchoolByFeeRange, getSchoolByShift } from '../controllers/filter-controllers.js';
 import { getSchoolCardData } from "../controllers/card-controllers.js";
 import {addSupport, getSupportByStudId, getSupportBySupId ,deleteSupportBySupId} from '../controllers/support-controllers.js';
-
+import { predictSchools } from "../controllers/predictor-controllers.js";
+import {
+  createBlog,
+  getAllBlogs,
+  getBlogById,
+} from "../controllers/blog-controllers.js";
 const router = express.Router();
 
 // Schools
@@ -48,5 +52,11 @@ router.post('/support', ensureAuthenticated, addSupport);
 router.get('/support/:studId', getSupportByStudId);
 router.get('/support-id/:supportId', getSupportBySupId);  
 router.delete('/support/:supportId',ensureAuthenticated, deleteSupportBySupId);
+
+router.post('/predict-schools', predictSchools);
+
+router.post("/blogs", createBlog);
+router.get("/blogs", getAllBlogs);
+router.get("/blogs/:id", getBlogById);
 
 export default router;

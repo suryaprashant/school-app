@@ -1,10 +1,13 @@
-import express from "express";
+import express from 'express';
 import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "../config/db.js";
 import authRoutes from './routes/auth-routes.js'
 import userRoutes from './routes/user-routes.js'
 import schoolRoutes from './routes/school-routes.js'
+import applicationRoutes from './routes/application-routes.js';
+import reviewRoutes from './routes/review-routes.js'
+import formRoutes from './routes/form-routes.js'
 
 dotenv.config();
 connectDB();
@@ -20,6 +23,9 @@ app.use(cors());
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/admin', schoolRoutes);
+app.use('/api/applications', applicationRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/form', formRoutes);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
