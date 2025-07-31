@@ -6,7 +6,7 @@ import {
   generateAndSaveStudentPdf,
    viewStudentPDF,
   downloadStudentPdf,
-} from "../controllers/studentPdf-controllers.js";
+} from "../controllers/student-pdf-controllers.js";
 
 import {
     addStudent,

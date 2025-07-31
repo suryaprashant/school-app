@@ -8,25 +8,25 @@ import {
   submitBulkForms,
   updateFormStatus,
   deleteForm
-} from "../controllers/form-controllers.js";
+} from "../controllers/forms-controllers.js";
 
 import ensureAuthenticated from "../middlewares/validate-token-middleware.js";
 
 const router = express.Router();
 
-router.get("/student/:studId", ensureAuthenticated, getFormsByStudent);
+router.get("/student/:studId", getFormsByStudent);
 
-router.get("/school/:schoolId", ensureAuthenticated, getFormsBySchool);
+router.get("/school/:schoolId", getFormsBySchool);
 
-router.get("/track/:formId", ensureAuthenticated, trackForm);
+router.get("/track/:formId", trackForm);
 
 router.get("/:formId", ensureAuthenticated, getFormDetails);
 
-router.post("/:schoolId/:studId", ensureAuthenticated, submitForm);
+router.post("/bulk-forms/:studId/:formId", submitBulkForms);
 
-router.post("/bulk/:studId", ensureAuthenticated, submitBulkForms);
+router.post("/:schoolId/:studId/:formId", submitForm);
 
-router.put("/:formId", ensureAuthenticated, updateFormStatus);
+router.put("/:formId", updateFormStatus);
 
 router.delete("/:formId", ensureAuthenticated, deleteForm);
 

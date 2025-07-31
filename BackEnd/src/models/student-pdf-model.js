@@ -14,5 +14,5 @@ const StudentPdfSchema = new mongoose.Schema({
   },
 }, { timestamps: true });
 
-const StudentPdf = mongoose.model("StudentPdf", StudentPdfSchema);
+const StudentPdf = mongoose.model("pdfs", StudentPdfSchema);
 export default StudentPdf;
