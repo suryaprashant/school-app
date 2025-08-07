@@ -8,7 +8,7 @@ import {
   submitBulkForms,
   updateFormStatus,
   deleteForm
-} from "../controllers/form-controllers.js";
+} from "../controllers/forms-controllers.js";
 
 import ensureAuthenticated from "../middlewares/validate-token-middleware.js";
 

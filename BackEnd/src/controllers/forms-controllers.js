@@ -7,7 +7,7 @@ import {
   submitBulkFormsService,
   updateFormStatusService,
   deleteFormService
-} from "../services/form-services.js";
+} from "../services/forms-services.js";
 
 export const getFormsByStudent = async (req, res) => {
   try {
