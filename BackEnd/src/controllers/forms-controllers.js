@@ -57,10 +57,9 @@ export const getFormDetails = async (req, res) => {
 
 export const submitForm = async (req, res) => {
   try {
-    const { schoolId, studId } = req.params;
-    const formData = req.body;
+    const { formId, schoolId, studId } = req.params;
 
-    const data = await submitFormService(schoolId, studId, formData);
+    const data = await submitFormService(formId, schoolId, studId);
     res.status(201).json({ status: "success", message: "Form submitted successfully", data });
   } catch (err) {
     res.status(err.status || 500).json({ status: "failed", message: err.message });
@@ -68,11 +67,14 @@ export const submitForm = async (req, res) => {
 };
 
 export const submitBulkForms = async (req, res) => {
-  try {
-    const { studId } = req.params;
-    const forms = req.body.forms; // expecting { forms: [...] }
 
-    const data = await submitBulkFormsService(studId, forms);
+  console.log(req.body)
+
+  try {
+    const { studId, formId } = req.params;
+    const { forms } = req.body;
+
+    const data = await submitBulkFormsService(studId, forms, formId);
     res.status(201).json({ status: "success", message: "Bulk forms submitted", data });
   } catch (err) {
     res.status(err.status || 500).json({ status: "failed", message: err.message });
