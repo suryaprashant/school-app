@@ -1,4 +1,4 @@
-const FromType = Object.freeze({
+export const FromType = Object.freeze({
   USER: 'User',
   SERVER: 'Server',
 });

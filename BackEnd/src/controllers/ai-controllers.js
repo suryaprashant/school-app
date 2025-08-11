@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import AiModel from '../models/ai-model.js';
 import School from '../models/school-model.js';
+import { convertSchoolsToAiModels } from '../utils/ai-utils.js';
 
 dotenv.config();
 
@@ -57,16 +58,16 @@ export const askOpenAI = async (req, res) => {
     }
     }
 
-    // // Use the Gemini model
-    // const model = genAI.getGenerativeModel({ model: "models/gemini-1.5-flash-latest" });
+   
+     const model = genAI.getGenerativeModel({ model: "models/gemini-1.5-flash-latest" });
 
-    // const result = await model.generateContent('How are you?');
-    // const response = await result.response;
-    // const text = response.text();
+     const result = await model.generateContent(getPrompt(matchingSchools,aiModel));
+    const response = await result.response;
+    const text = response.text();
 
     res.json({
-      reply: 'Done',
-      data: matchingSchools,
+      reply: getPrompt(matchingSchools,aiModel),
+      data: text
     });
   } catch (error) {
     console.error('Error in askOpenAI:', error);
@@ -76,3 +77,50 @@ export const askOpenAI = async (req, res) => {
     });
   }
 };
+
+function getPrompt(schools,model){
+
+  return formatAiModels(convertSchoolsToAiModels(schools),model)
+};
+function formatAiModels(aiModels,userPref) {
+  if (!Array.isArray(aiModels) || aiModels.length === 0) {
+    throw new Error("aiModels must be a non-empty array.");
+  }
+
+
+  if (!userPref) {
+    throw new Error("No user preference found in the list.");
+  }
+
+  // Format attributes into key:value string
+  const formatAttributes = (model) => {
+    const attrs = [
+      ['fees', model.fees],
+      ['board', model.board],
+      ['state', model.state],
+      ['schoolMode', model.schoolMode],
+      ['schoolShift', model.schoolShift],
+      ['genderType', model.genderType],
+      ['languageMedium', model.languageMedium],
+      ['activities', model.activities.join('|')],
+      ['amenities', model.amenities.join('|')]
+    ].filter(([_, value]) => value && value !== '' && value.length !== 0);
+
+    return attrs.map(([key, value]) => `${key}:${value}`).join(', ');
+  };
+
+  // Build User Preference string
+  let result = `User Pref: ${formatAttributes(userPref)}\n\nRecommendation List:\n`;
+
+  // Get only SERVER entries
+  const serverModels = aiModels.filter(m => m.from === 'Server');
+
+  serverModels.forEach((model, index) => {
+    result += `${index + 1} ${model.name} – ${formatAttributes(model)}\n`;
+  });
+
+result+="\n\nTell only the serial number of the college which is best for user pref no need to explain anything."
+
+
+  return result;
+}
