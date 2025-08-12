@@ -12,7 +12,9 @@ export function convertSchoolsToAiModels(schoolList) {
   }
 
   return schoolList.map(school => {
+    
     return new AiModel({
+      _id: school._id?.toString?.() ?? String(school._id), 
       from: FromType.SERVER,
       name: school.name,
       fees: school.feeRange,

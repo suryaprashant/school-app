@@ -3,6 +3,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import AiModel from '../models/ai-model.js';
 import School from '../models/school-model.js';
 import { convertSchoolsToAiModels } from '../utils/ai-utils.js';
+import mongoose from 'mongoose';
 
 dotenv.config();
 
@@ -16,8 +17,7 @@ export const askOpenAI = async (req, res) => {
 
     let initialResults = [];
 
-    console.log(aiModel.state);
-    console.log(aiModel.board);
+   
 
     if (aiModel.from === 'User') {
       // Step 1: Mandatory filters – fetch from DB
@@ -55,19 +55,20 @@ export const askOpenAI = async (req, res) => {
       if (!hasAtLeastOneOptionalFilter) {
         matchingSchools = initialResults;
       }
+
     }
     }
 
-   
-     const model = genAI.getGenerativeModel({ model: "models/gemini-1.5-flash-latest" });
 
-     const result = await model.generateContent(getPrompt(matchingSchools,aiModel));
-    const response = await result.response;
-    const text = response.text();
+ const model = genAI.getGenerativeModel({ model: "models/gemini-1.5-flash-latest" });
+
+     //const result = await model.generateContent(getPrompt(matchingSchools,aiModel));
+   // const response = await result.response;
+    //const text = response.text();
 
     res.json({
       reply: getPrompt(matchingSchools,aiModel),
-      data: text
+      data:await  getSchool(getSchoolIds([1,2],matchingSchools))
     });
   } catch (error) {
     console.error('Error in askOpenAI:', error);
@@ -77,6 +78,23 @@ export const askOpenAI = async (req, res) => {
     });
   }
 };
+
+
+function getSchoolIds(answer,schools){
+ let ids=[]
+
+  answer.map(ans=>{
+ids.push(schools[ans-1]._id);
+  })
+  return ids
+}
+
+async function getSchool(ids) {
+  const schools = await Promise.all(
+    ids.map(id => School.findById(new mongoose.Types.ObjectId(id)).lean())  // no need to wrap in ObjectId unless required
+  );
+  return schools.filter(Boolean); // drop nulls
+}
 
 function getPrompt(schools,model){
 
@@ -95,6 +113,7 @@ function formatAiModels(aiModels,userPref) {
   // Format attributes into key:value string
   const formatAttributes = (model) => {
     const attrs = [
+
       ['fees', model.fees],
       ['board', model.board],
       ['state', model.state],
@@ -119,8 +138,17 @@ function formatAiModels(aiModels,userPref) {
     result += `${index + 1} ${model.name} – ${formatAttributes(model)}\n`;
   });
 
-result+="\n\nTell only the serial number of the college which is best for user pref no need to explain anything."
+result+="\n\nTell only the serial number of the best three college based on user pref no need to explain anything.In the format (1,2,3)"
 
 
   return result;
 }
+
+function stringToIntList(str) {
+    return str
+        .replace(/[()\n\s]/g, '') // remove (), newlines, and spaces
+        .split(',')
+        .filter(x => x)           // remove empty strings
+        .map(Number);             // convert to numbers
+}
+

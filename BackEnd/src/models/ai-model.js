@@ -21,7 +21,9 @@ const SchoolShift = Object.freeze(['morning', 'afternoon', 'night school']);
 const GenderType = Object.freeze(['boy', 'girl', 'co-ed']);
 
 class AiModel {
+
   constructor({
+    _id='',
     from = '',
     name = '',
     fees = '',
@@ -41,6 +43,10 @@ class AiModel {
 
     if (from === FromType.SERVER && (!name || typeof name !== 'string')) {
       throw new Error(`'name' is required when 'from' is 'Server' and must be a non-empty string.`);
+    }
+
+      if (from === FromType.SERVER && (!_id || typeof _id !== 'string')) {
+      throw new Error(`'_id' is required when 'from' is 'Server' and must be a non-empty string.`);
     }
 
     if (!board || typeof board !== 'string') {
