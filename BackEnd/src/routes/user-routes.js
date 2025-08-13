@@ -3,6 +3,12 @@ import express from "express";
 import ensureAuthenticated from "../middlewares/validate-token-middleware.js";
 
 import {
+  generateAndSaveStudentPdf,
+   viewStudentPDF,
+  downloadStudentPdf,
+} from "../controllers/student-pdf-controllers.js";
+
+import {
     addStudent,
     updateStudent,
     deleteStudent,
@@ -35,9 +41,13 @@ router.post("/preferences/",  addPreference);
 router.put("/preferences/:studId",  updatePreference);
 router.get("/preferences/:studId",  getPreference);
 
-router.post("/shortlist", ensureAuthenticated, addToShortlist);
-router.get("/shortlist/:authId", ensureAuthenticated, getShortlistedSchools);
-router.get("/shortlist/count/:authId", ensureAuthenticated, getShortlistCount);
-router.post("/shortlist/remove", ensureAuthenticated, removeShortlist);
+router.post("/shortlist",  addToShortlist);
+router.get("/shortlist/:authId",  getShortlistedSchools);
+router.get("/shortlist/count/:authId", getShortlistCount);
+router.post("/shortlist/remove", removeShortlist);
+
+router.get("/pdf/view/:studId", viewStudentPDF);
+router.get("/pdf/download/:studId", downloadStudentPdf);
+router.post("/pdf/generate/:studId", generateAndSaveStudentPdf);
 
 export default router;

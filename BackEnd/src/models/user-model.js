@@ -7,12 +7,7 @@ const StudentSchema = new mongoose.Schema(
             ref: "auths", 
             required: true
         },
-        shortlistedSchools: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "schools" 
-        }
-        ],
+
         email: {
             type: String,
             required: true
@@ -47,6 +42,11 @@ const StudentSchema = new mongoose.Schema(
             enum: ['student','parent'], // Since this is only for students
             required: true
         },
+      shortlistedSchools: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "schools",
+      default: []  
+    }
     },
     {
         timestamps: true
