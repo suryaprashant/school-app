@@ -49,6 +49,7 @@ const SchoolSchema = new mongoose.Schema({
       "More than 5 Lakh"
     ]
   },
+  rank:{type:String,required:false},
   address:{type:String,required:false},
   pinCode:{type:Number,required:false},
   upto: { type: String, required: true },

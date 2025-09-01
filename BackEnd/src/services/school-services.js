@@ -8,13 +8,13 @@ export const addSchoolService = async (data) => {
   const {
     name, description, board, state, city, schoolMode, genderType, shifts, feeRange,
     address, pinCode, upto, email, mobileNo, specialist, tags, website, status,
-    languageMedium, transportAvailable
+    languageMedium, transportAvailable,rank
   } = data;
 
   const school = new School({
     name, description, board, state, city, schoolMode, genderType, shifts, feeRange,
     address, pinCode, upto, email, mobileNo, specialist, tags, website, status,
-    languageMedium, transportAvailable
+    languageMedium, transportAvailable,rank
   });
 
   return await school.save();
