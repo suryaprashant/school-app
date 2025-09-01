@@ -139,6 +139,48 @@ class ChatbotService {
         question: "Schools with transport available no",
         field: "transportAvailable",
         value: "no"
+      },
+       {
+        id: 23,
+        question: "Schools with rank A+",
+        field: "rank",
+        value: "A+"
+      },
+      {
+        id: 24,
+        question: "Schools with rank A",
+        field: "rank",
+        value: "A"
+      },
+      {
+        id: 25,
+        question: "Schools with rank B+",
+        field: "rank",
+        value: "B+"
+      },
+      {
+        id: 26,
+        question: "Schools with rank B",
+        field: "rank",
+        value: "B"
+      },
+      {
+        id: 27,
+        question: "Schools with rank C+",
+        field: "rank",
+        value: "C+"
+      },
+      {
+        id: 28,
+        question: "Schools with rank C",
+        field: "rank",
+        value: "C"
+      },
+      {
+        id: 29,
+        question: "Schools with rank D",
+        field: "rank",
+        value: "D"
       }
     ];
   }
