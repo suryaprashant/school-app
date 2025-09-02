@@ -3,7 +3,7 @@ import PDFDocument from "pdfkit";
 export const generateStudentPDFBuffer = (student) => {
   return new Promise((resolve, reject) => {
     try {
-      const doc = new PDFDocument();
+      const doc = new PDFDocument({ margin: 50 });
       const buffers = [];
 
       doc.on("data", buffers.push.bind(buffers));
@@ -12,97 +12,166 @@ export const generateStudentPDFBuffer = (student) => {
         resolve(pdfData);
       });
 
-      // Heading
-      doc.fontSize(20).text("Student Application Summary", { align: "center" });
-      doc.moveDown();
+      // Helper function to draw a fully joined table
+      const drawSectionTable = (title, rows, columnWidths = [150, 350]) => {
+        // Section title
+        doc
+          .fontSize(16)
+          .font('Helvetica-Bold')
+          .text(title, { align: "center", underline: true })
+          .moveDown(1);
 
-      const add = (label, value) => {
-        doc.fontSize(12).text(`${label}: ${value ?? "-"}`);
+        const tableLeft = 50;
+        const tableWidth = columnWidths.reduce((a, b) => a + b, 0);
+        const rowHeight = 20;
+        const startY = doc.y;
+
+        // Draw top border
+        doc.moveTo(tableLeft, startY)
+           .lineTo(tableLeft + tableWidth, startY)
+           .stroke();
+
+        // Draw vertical borders (left, middle, right)
+        doc.moveTo(tableLeft, startY)
+           .lineTo(tableLeft, startY + (rowHeight * rows.length))
+           .stroke()
+           .moveTo(tableLeft + columnWidths[0], startY)
+           .lineTo(tableLeft + columnWidths[0], startY + (rowHeight * rows.length))
+           .stroke()
+           .moveTo(tableLeft + tableWidth, startY)
+           .lineTo(tableLeft + tableWidth, startY + (rowHeight * rows.length))
+           .stroke();
+
+        // Draw rows with connected horizontal borders
+        rows.forEach(([label, value], i) => {
+          const rowY = startY + (i * rowHeight);
+
+          // Draw content
+          doc.fontSize(10)
+             .font('Helvetica-Bold')
+             .text(label, tableLeft + 5, rowY + 5, { width: columnWidths[0] - 10 })
+             .font('Helvetica')
+             .text(value || '-', tableLeft + columnWidths[0] + 5, rowY + 5, { width: columnWidths[1] - 10 });
+
+          // Draw horizontal border below row
+          doc.moveTo(tableLeft, rowY + rowHeight)
+             .lineTo(tableLeft + tableWidth, rowY + rowHeight)
+             .stroke();
+        });
+
+        doc.moveDown(2);
       };
 
-      // Student Basic Info
-      add("Name", student.name);
-      add("Date of Birth", student.dob ? new Date(student.dob).toLocaleDateString() : "-");
-      add("Age", student.age);
-      add("Gender", student.gender);
-      add("Mother Tongue", student.motherTongue);
-      add("Place of Birth", student.placeOfBirth);
-      add("Specially Abled", student.speciallyAbled ? "Yes" : "No");
-      add("Specially Abled Type", student.speciallyAbledType);
-      add("Nationality", student.nationality);
-      add("Religion", student.religion);
-      add("Caste", student.caste);
-      add("Subcaste", student.subcaste);
-      add("Aadhar Number", student.aadharNo);
-      add("Blood Group", student.bloodGroup);
-      add("Allergic To", student.allergicTo);
-      add("Interest", student.interest);
-      add("Home Language", student.homeLanguage);
-      add("Yearly Budget", student.yearlyBudget);
+      // Header and Student Basic Info on first page
+      doc
+        .fontSize(20)
+        .font('Helvetica-Bold')
+        .text("Student Application Summary", { align: "center" })
+        .moveDown(0.5)
+        .fontSize(10)
+        .font('Helvetica-Oblique')
+        .text(`Generated on: ${new Date().toLocaleDateString()}`, { align: "right" })
+        .moveDown(2);
 
-      doc.moveDown();
-      doc.fontSize(14).text("Previous School Info", { underline: true });
-      add("Last School Name", student.lastSchoolName);
-      add("Class Completed", student.classCompleted);
-      add("Last Academic Year", student.lastAcademicYear);
-      add("Reason For Leaving", student.reasonForLeaving);
-      add("Board", student.board);
+      // Student Basic Info Section (on first page)
+      drawSectionTable("Student Basic Information", [
+        ["Name", student.name],
+        ["Date of Birth", student.dob ? new Date(student.dob).toLocaleDateString() : "-"],
+        ["Age", student.age],
+        ["Gender", student.gender],
+        ["Mother Tongue", student.motherTongue],
+        ["Place of Birth", student.placeOfBirth],
+        ["Specially Abled", student.speciallyAbled ? "Yes" : "No"],
+        ["Specially Abled Type", student.speciallyAbledType],
+        ["Nationality", student.nationality],
+        ["Religion", student.religion],
+        ["Caste", student.caste],
+        ["Subcaste", student.subcaste],
+        ["Aadhar Number", student.aadharNo],
+        ["Blood Group", student.bloodGroup],
+        ["Allergic To", student.allergicTo],
+        ["Interest", student.interest],
+        ["Home Language", student.homeLanguage],
+        ["Yearly Budget", student.yearlyBudget]
+      ]);
 
-      doc.moveDown();
-      doc.fontSize(14).text("Father Details", { underline: true });
-      add("Name", student.fatherName);
-      add("Age", student.fatherAge);
-      add("Qualification", student.fatherQualification);
-      add("Profession", student.fatherProfession);
-      add("Annual Income", student.fatherAnnualIncome);
-      add("Phone No", student.fatherPhoneNo);
-      add("Aadhar No", student.fatherAadharNo);
-      add("Email", student.fatherEmail);
-
-      doc.moveDown();
-      doc.fontSize(14).text("Mother Details", { underline: true });
-      add("Name", student.motherName);
-      add("Age", student.motherAge);
-      add("Qualification", student.motherQualification);
-      add("Profession", student.motherProfession);
-      add("Annual Income", student.motherAnnualIncome);
-      add("Phone No", student.motherPhoneNo);
-      add("Aadhar No", student.motherAadharNo);
-      add("Email", student.motherEmail);
-
-      doc.moveDown();
-      add("Relationship Status", student.relationshipStatus);
-
-      if (student.relationshipStatus !== "Married") {
-        doc.moveDown();
-        doc.fontSize(14).text("Guardian Details", { underline: true });
-        add("Name", student.guardianName);
-        add("Contact No", student.guardianContactNo);
-        add("Relation to Student", student.guardianRelationToStudent);
-        add("Qualification", student.guardianQualification);
-        add("Profession", student.guardianProfession);
-        add("Email", student.guardianEmail);
-        add("Aadhar No", student.guardianAadharNo);
+      // Check if we need new page for next sections
+      if (doc.y > doc.page.height - 300) {
+        doc.addPage();
       }
 
-      doc.moveDown();
-      doc.fontSize(14).text("Addresses", { underline: true });
-      add("Present Address", student.presentAddress);
-      add("Permanent Address", student.permanentAddress);
+      // Previous School and Address Info on same page
+      drawSectionTable("Previous School Information", [
+        ["Last School Name", student.lastSchoolName],
+        ["Class Completed", student.classCompleted],
+        ["Last Academic Year", student.lastAcademicYear],
+        ["Reason For Leaving", student.reasonForLeaving],
+        ["Board", student.board]
+      ]);
 
+      drawSectionTable("Address Information", [
+        ["Present Address", student.presentAddress],
+        ["Permanent Address", student.permanentAddress]
+      ]);
+
+      // New page for Parent Details
+      doc.addPage();
+
+      // Father and Mother Details on same page
+      drawSectionTable("Father Details", [
+        ["Name", student.fatherName],
+        ["Age", student.fatherAge],
+        ["Qualification", student.fatherQualification],
+        ["Profession", student.fatherProfession],
+        ["Annual Income", student.fatherAnnualIncome],
+        ["Phone No", student.fatherPhoneNo],
+        ["Aadhar No", student.fatherAadharNo],
+        ["Email", student.fatherEmail]
+      ]);
+
+      drawSectionTable("Mother Details", [
+        ["Name", student.motherName],
+        ["Age", student.motherAge],
+        ["Qualification", student.motherQualification],
+        ["Profession", student.motherProfession],
+        ["Annual Income", student.motherAnnualIncome],
+        ["Phone No", student.motherPhoneNo],
+        ["Aadhar No", student.motherAadharNo],
+        ["Email", student.motherEmail]
+      ]);
+
+      // Family Information
+      drawSectionTable("Family Information", [
+        ["Relationship Status", student.relationshipStatus]
+      ]);
+
+      // New page for all Siblings
       if (student.siblings && student.siblings.length > 0) {
-        doc.moveDown();
-        doc.fontSize(14).text("Siblings", { underline: true });
+        doc.addPage();
+        doc.fontSize(16)
+           .font('Helvetica-Bold')
+           .text("Siblings Information", { align: "center", underline: true })
+           .moveDown(1);
+
         student.siblings.forEach((sibling, index) => {
-          doc.fontSize(12).text(`Sibling ${index + 1}:`);
-          add("  Name", sibling.name);
-          add("  Age", sibling.age);
-          add("  Sex", sibling.sex);
-          add("  Institute", sibling.nameOfInstitute);
-          add("  Class", sibling.className);
-          doc.moveDown();
+          drawSectionTable(`Sibling ${index + 1}`, [
+            ["Name", sibling.name],
+            ["Age", sibling.age],
+            ["Sex", sibling.sex],
+            ["Institute", sibling.nameOfInstitute],
+            ["Class", sibling.className]
+          ]);
         });
       }
+
+      // Footer on last page
+      doc
+        .fontSize(10)
+        .font('Helvetica-Oblique')
+        .text('This document is system generated and does not require signature.', {
+          align: 'center',
+          width: 500
+        });
 
       doc.end();
     } catch (err) {

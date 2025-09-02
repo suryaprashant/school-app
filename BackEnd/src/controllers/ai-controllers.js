@@ -62,13 +62,13 @@ export const askOpenAI = async (req, res) => {
 
  const model = genAI.getGenerativeModel({ model: "models/gemini-1.5-flash-latest" });
 
-     //const result = await model.generateContent(getPrompt(matchingSchools,aiModel));
-   // const response = await result.response;
-    //const text = response.text();
+     const result = await model.generateContent(getPrompt(matchingSchools,aiModel));
+    const response = await result.response;
+    const text = response.text();
 
     res.json({
       reply: getPrompt(matchingSchools,aiModel),
-      data:await  getSchool(getSchoolIds([1,2],matchingSchools))
+      data:await  getSchool(getSchoolIds(stringToIntList(text),matchingSchools))
     });
   } catch (error) {
     console.error('Error in askOpenAI:', error);

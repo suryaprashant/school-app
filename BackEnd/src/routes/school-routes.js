@@ -1,6 +1,14 @@
 import express from "express";
 import ensureAuthenticated from "../middlewares/validate-token-middleware.js";
-import {addSchool, getSchoolById, getSchoolsByStatus,  updateSchoolInfo, deleteSchool} from '../controllers/school-controllers.js';
+import {addSchool, getSchoolById, getSchoolsByStatus,  updateSchoolInfo, deleteSchool,uploadSchoolPhotos,
+  uploadSchoolVideo,
+  deleteSchoolPhoto,
+  deleteSchoolVideo,
+getSchoolPhoto,
+getSchoolVideos,
+getSchoolPhotos,
+getSchoolVideo
+} from '../controllers/school-controllers.js';
 import {addAmenities, getAmenitiesById, updateAmenities} from '../controllers/amenities-controllers.js';
 import {addActivities, getActivitiesById, updateActivities} from '../controllers/activities-controllers.js';
 import {addAlumni, getAlumniBySchool, deleteAlumniBySchool, updateAlumniBySchool} from '../controllers/alumni-controllers.js';
@@ -15,6 +23,8 @@ import {
   getAllBlogs,
   getBlogById,
 } from "../controllers/blog-controllers.js";
+import { photoUpload, videoUpload } from '../../config/multer.js';
+
 const router = express.Router();
 
 // Schools
@@ -23,6 +33,17 @@ router.get('/schools/status/:status', getSchoolsByStatus);
 router.get('/schools/:id', getSchoolById);
 router.put('/schools/:id', updateSchoolInfo);
 router.delete('/schools/:id', deleteSchool);
+
+router.post('/:id/upload/photos', photoUpload.array('files', 4), uploadSchoolPhotos); // 5MB limit
+router.post('/:id/upload/video', videoUpload.single('file'), uploadSchoolVideo); // 20MB limit
+router.delete('/:id/photo/:publicId', deleteSchoolPhoto);
+router.delete('/:id/video/:publicId', deleteSchoolVideo);
+
+router.get('/:id/photos', getSchoolPhotos); // Get all photos
+router.get('/:id/videos', getSchoolVideos); // Get all videos
+router.get('/:id/photo/:publicId', getSchoolPhoto); // Get specific photo
+router.get('/:id/video/:publicId', getSchoolVideo); // Get specific video
+
 
 // Amenities
 router.post('/schools/amenities/', addAmenities);
