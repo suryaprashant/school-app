@@ -39,7 +39,7 @@ const getQuestionsByCategory = async (req, res) => {
   }
 };
 
-// Filter schools by question - SIMPLIFIED RESPONSE
+// Filter schools by question - RETURN schoolId
 const filterByQuestion = async (req, res) => {
   try {
     const { questionId } = req.params;
@@ -48,7 +48,7 @@ const filterByQuestion = async (req, res) => {
     res.status(200).json({
       success: true,
       count: result.count,
-      schools: result.schools
+      schoolIds: result.schools // Changed from 'schools' to 'schoolIds'
     });
   } catch (error) {
     res.status(500).json({
@@ -58,7 +58,7 @@ const filterByQuestion = async (req, res) => {
   }
 };
 
-// Filter schools with multiple criteria - SIMPLIFIED RESPONSE
+// Filter schools with multiple criteria - RETURN schoolId
 const filterWithMultipleCriteria = async (req, res) => {
   try {
     const filters = req.body;
@@ -67,7 +67,7 @@ const filterWithMultipleCriteria = async (req, res) => {
     res.status(200).json({
       success: true,
       count: result.count,
-      schools: result.schools
+      schoolIds: result.schools // Changed from 'schools' to 'schoolIds'
     });
   } catch (error) {
     res.status(500).json({
@@ -77,7 +77,7 @@ const filterWithMultipleCriteria = async (req, res) => {
   }
 };
 
-// Search schools by name - SIMPLIFIED RESPONSE
+// Search schools by name - RETURN schoolId
 const searchSchools = async (req, res) => {
   try {
     const { name } = req.query;
@@ -93,7 +93,7 @@ const searchSchools = async (req, res) => {
     res.status(200).json({
       success: true,
       count: result.count,
-      schools: result.schools
+      schoolIds: result.schools // Changed from 'schools' to 'schoolIds'
     });
   } catch (error) {
     res.status(500).json({
