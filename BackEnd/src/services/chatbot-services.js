@@ -1,4 +1,4 @@
-services 
+ 
 import School from '../models/school-model.js';
 
 class ChatbotService {
