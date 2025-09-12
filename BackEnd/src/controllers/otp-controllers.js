@@ -17,14 +17,13 @@ export const verifyOtpController = async (req, res) => {
     const { phone, otp } = req.body;
     if (!phone || !otp) return res.status(400).json({ message: "Phone & OTP required" });
 
-    const isValid = await verifyOtpService(phone, otp);
-
-    if (isValid) {
-      return res.status(200).json({ message: "OTP verified successfully" });
-    } else {
-      return res.status(400).json({ message: "Invalid or expired OTP" });
-    }
+    const auth = await verifyOtpService(phone, otp);
+    res.status(201).json({
+      status: 'success',
+      message: `Otp verified successfully`,
+      data:  auth
+    });
   } catch (error) {
-    res.status(500).json({ message: "Failed to verify OTP", error: error.message });
+    res.status(error.status || 500).json({ status: 'failed', message: error.message });
   }
 };
