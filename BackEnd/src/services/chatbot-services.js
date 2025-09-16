@@ -1,9 +1,11 @@
  
 import School from '../models/school-model.js';
+import AIService from './chatbot-ai-services.js';
 
 class ChatbotService {
   constructor() {
     this.questions = this.getPredefinedQuestions();
+     this.aiService = new AIService();
   }
 
   // Get all predefined questions with answers embedded
@@ -196,44 +198,7 @@ class ChatbotService {
     return this.questions.filter(q => q.field === category);
   }
 
-  // Filter schools based on a specific question - SIMPLIFIED RESPONSE
- async filterSchoolsByQuestion(questionId) {
-    const question = this.questions.find(q => q.id === questionId);
-    
-    if (!question) {
-      throw new Error('Question not found');
-    }
 
-    const filter = {};
-    filter[question.field] = question.value;
-
-    try {
-      const schools = await School.find(filter).select('_id'); // Select only _id
-      
-      // Return school IDs instead of names
-      return {
-        count: schools.length,
-        schools: schools.map(school => school._id)
-      };
-    } catch (error) {
-      throw new Error(`Error filtering schools: ${error.message}`);
-    }
-  }
-
-  // Filter schools with multiple criteria - SIMPLIFIED RESPONSE
-async filterSchoolsWithMultipleCriteria(filters) {
-    try {
-      const schools = await School.find(filters).select('_id'); // Select only _id
-      
-      // Return school IDs instead of names
-      return {
-        count: schools.length,
-        schools: schools.map(school => school._id)
-      };
-    } catch (error) {
-      throw new Error(`Error filtering schools: ${error.message}`);
-    }
-  }
 
  async searchSchoolsByName(searchTerm) {
     try {
@@ -250,7 +215,63 @@ async filterSchoolsWithMultipleCriteria(filters) {
       throw new Error(`Error searching schools: ${error.message}`);
     }
   }
+
+   async getAIRecommendations(filters) {
+    try {
+      return await this.aiService.getSchoolRecommendations(filters);
+    } catch (error) {
+      console.error('AI Recommendation Error:', error);
+      // Fallback to regular filtering
+      const schools = await School.find(filters).select('_id');
+      return {
+        aiResponse: "Here are schools matching your criteria:",
+        recommendedSchools: schools.map(school => school._id.toString())
+      };
+    }
+  }
+
+  // Update filter methods to optionally use AI
+  async filterSchoolsWithMultipleCriteria(filters, useAI = false) {
+    try {
+      if (useAI) {
+        return await this.getAIRecommendations(filters);
+      } else {
+        const schools = await School.find(filters).select('_id');
+        return {
+          count: schools.length,
+          schools: schools.map(school => school._id.toString()),
+          aiResponse: null
+        };
+      }
+    } catch (error) {
+      throw new Error(`Error filtering schools: ${error.message}`);
+    }
+  }
+
+  async filterSchoolsByQuestion(questionId, useAI = false) {
+    const question = this.questions.find(q => q.id === questionId);
+    
+    if (!question) {
+      throw new Error('Question not found');
+    }
+
+    const filter = {};
+    filter[question.field] = question.value;
+
+    if (useAI) {
+      return await this.getAIRecommendations(filter);
+    } else {
+      const schools = await School.find(filter).select('_id');
+      return {
+        count: schools.length,
+        schools: schools.map(school => school._id.toString()),
+        aiResponse: null
+      };
+    }
+  }
 }
+
+
 
 export default ChatbotService;
 
