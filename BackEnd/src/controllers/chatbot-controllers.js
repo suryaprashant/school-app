@@ -40,22 +40,36 @@ const getQuestionsByCategory = async (req, res) => {
 };
 
 // Filter schools by question - RETURN schoolId
+// Filter schools by question - RETURN schoolId (or AI names if useAI)
 const filterByQuestion = async (req, res) => {
   try {
     const { questionId } = req.params;
     const { useAI } = req.query; // Get AI flag from query params
-    
+
+    const useAiFlag = useAI === 'true';
+
     const result = await chatbotService.filterSchoolsByQuestion(
-      parseInt(questionId), 
-      useAI === 'true'
+      parseInt(questionId),
+      useAiFlag
     );
-    
-    res.status(200).json({
-      success: true,
-      count: result.count || result.recommendedSchools?.length,
-      schoolIds: result.schools || result.recommendedSchools,
-      aiResponse: result.aiResponse || null
-    });
+
+    if (useAiFlag) {
+      // AI path => return AI text and recommended school NAMES
+      res.status(200).json({
+        success: true,
+        count: Array.isArray(result.recommendedSchools) ? result.recommendedSchools.length : 0,
+        recommendedSchools: result.recommendedSchools || [],
+        aiResponse: result.aiResponse || null
+      });
+    } else {
+      // DB path => return school IDs
+      res.status(200).json({
+        success: true,
+        count: result.count || (result.schools ? result.schools.length : 0),
+        schoolIds: result.schools || [],
+        aiResponse: null
+      });
+    }
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -68,18 +82,29 @@ const filterWithMultipleCriteria = async (req, res) => {
   try {
     const filters = req.body;
     const { useAI } = req.query; // Get AI flag from query params
-    
+
+    const useAiFlag = useAI === 'true';
+
     const result = await chatbotService.filterSchoolsWithMultipleCriteria(
-      filters, 
-      useAI === 'true'
+      filters,
+      useAiFlag
     );
-    
-    res.status(200).json({
-      success: true,
-      count: result.count || result.recommendedSchools?.length,
-      schoolIds: result.schools || result.recommendedSchools,
-      aiResponse: result.aiResponse || null
-    });
+
+    if (useAiFlag) {
+      res.status(200).json({
+        success: true,
+        count: Array.isArray(result.recommendedSchools) ? result.recommendedSchools.length : 0,
+        recommendedSchools: result.recommendedSchools || [],
+        aiResponse: result.aiResponse || null
+      });
+    } else {
+      res.status(200).json({
+        success: true,
+        count: result.count || (result.schools ? result.schools.length : 0),
+        schoolIds: result.schools || [],
+        aiResponse: null
+      });
+    }
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -87,7 +112,6 @@ const filterWithMultipleCriteria = async (req, res) => {
     });
   }
 };
-
 
 // Search schools by name - RETURN schoolId
 const searchSchools = async (req, res) => {

@@ -1,160 +1,163 @@
+// src/services/chatbot-ai-services.js
 import axios from 'axios';
-import School from '../models/school-model.js';
 
 class AIService {
   constructor() {
-    this.apiKey = process.env.API_KEY;
-    this.apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+    this.apiKey = process.env.API_KEY; // set in .env
+    this.baseUrl = 'https://generativelanguage.googleapis.com/v1beta';
+    this.model = 'models/gemini-1.5-flash'; // model to use
   }
 
-  async getSchoolRecommendations(filters) {
-    let matchingSchools;
+  /**
+   * Public method: returns { aiResponse, recommendedSchools }
+   * - aiResponse: cleaned text returned by AI (comma-separated names)
+   * - recommendedSchools: array of names (split and trimmed)
+   */
+  async getSchoolRecommendations(filters = {}) {
     try {
-      matchingSchools = await School.find(filters).select('name board feeRange rank city state schoolMode genderType transportAvailable');
-      
-      if (matchingSchools.length === 0) {
-        return {
-          aiResponse: "I couldn't find any schools matching your criteria. Please try different filters.",
-          recommendedSchools: []
-        };
-      }
+      const promptText = this.buildPrompt(filters);
+      const aiText = await this.callGeminiAI(promptText);
 
-      const prompt = this.buildPrompt(filters, matchingSchools);
-      const aiResponse = await this.callGeminiAI(prompt, matchingSchools);
-      
+      // aiText is a single comma separated string
+      const recommendedSchools = this.parseNames(aiText);
       return {
-        aiResponse: aiResponse,
-        recommendedSchools: matchingSchools.map(school => school._id.toString())
+        aiResponse: aiText,
+        recommendedSchools,
       };
-    } catch (error) {
-      console.error('AI Service Error:', error);
-      if (!matchingSchools) {
-        matchingSchools = await School.find(filters).select('_id');
-      }
+    } catch (err) {
+      console.error('AIService.getSchoolRecommendations error:', err);
+      const fallback = this.createFallbackResponse();
       return {
-        aiResponse: "Here are schools matching your criteria:",
-        recommendedSchools: matchingSchools.map(school => school._id.toString())
+        aiResponse: fallback,
+        recommendedSchools: this.parseNames(fallback),
       };
     }
   }
 
-  buildPrompt(filters, schools) {
+  // Build a short, precise prompt from filters
+  buildPrompt(filters) {
     const criteria = Object.entries(filters)
-      .map(([key, value]) => `${key}: ${value}`)
+      .map(([k, v]) => `${this.formatFilterName(k)}: ${v}`)
       .join(', ');
-
-    const schoolList = schools.slice(0, 10).map(school => 
-      `- ${school.name} (${school.board}, ${school.feeRange}, ${school.rank || 'No rank'}, ${school.city})`
-    ).join('\n');
 
     return `Based on these criteria: ${criteria}
 
-Available schools:
-${schoolList}
-
-Return ONLY a comma-separated list of the top 3 most suitable school names from the available list. 
-Do not include any other text, explanations, or formatting. 
-Just the school names separated by commas.
-
-Example format: "School Name A, School Name B, School Name C"`;
+Generate a list of 3 creative but realistic Indian school names that match the criteria.
+Return ONLY a comma-separated list of the 3 school names with no extra commentary or numbering.
+Example format:
+"Excel Academy, Bright Future International, Knowledge Heights School"`;
   }
 
-  async callGeminiAI(prompt, matchingSchools) {
+  // Friendly mapping of filter keys -> readable names
+  formatFilterName(key) {
+    const map = {
+      feeRange: 'Fee Range',
+      board: 'Education Board',
+      schoolMode: 'School Type',
+      genderType: 'Gender Type',
+      transportAvailable: 'Transport Availability',
+      rank: 'School Rank',
+    };
+    return map[key] || key;
+  }
+
+  // Call Gemini (Generative Language API) with correct payload
+  async callGeminiAI(promptText) {
+    if (!this.apiKey) {
+      throw new Error('Missing API_KEY in environment (process.env.API_KEY).');
+    }
+
+    const url = `${this.baseUrl}/${this.model}:generateContent?key=${this.apiKey}`;
+
+    const body = {
+      // contents array — text goes in parts[].text
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            { text: promptText }
+          ]
+        }
+      ],
+      // generationConfig holds temperature, tokens etc.
+      generationConfig: {
+        temperature: 0.7,
+        maxOutputTokens: 200,
+        topP: 0.8,
+        topK: 40
+      }
+    };
+
     try {
-      // First, let's check what models are available
-      const modelsResponse = await axios.get(
-        `https://generativelanguage.googleapis.com/v1beta/models?key=${this.apiKey}`,
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          }
+      const resp = await axios.post(url, body, {
+        headers: { 'Content-Type': 'application/json' },
+        timeout: 15000,
+      });
+
+      // resp.data.candidates[0].content.parts[0].text is typical
+      if (resp.data && Array.isArray(resp.data.candidates) && resp.data.candidates.length > 0) {
+        const candidate = resp.data.candidates[0];
+        // Some versions return candidate.content.parts[0].text
+        const text = candidate?.content?.parts?.[0]?.text;
+        if (text && typeof text === 'string') {
+          return this.cleanAIResponse(text);
         }
-      );
-
-
-      // Try to find the correct model
-      const availableModels = modelsResponse.data.models;
-      const geminiModel = availableModels.find(model => 
-        model.name.includes('gemini') && 
-        model.supportedGenerationMethods.includes('generateContent')
-      );
-
-      if (!geminiModel) {
-        throw new Error('No suitable Gemini model found with generateContent support');
       }
 
-      
-
-      // Use the correct model
-      const response = await axios.post(
-        `https://generativelanguage.googleapis.com/v1beta/${geminiModel.name}:generateContent?key=${this.apiKey}`,
-        {
-          contents: [{
-            parts: [{
-              text: prompt
-            }]
-          }],
-          generationConfig: {
-            temperature: 0.1, // Lower temperature for more deterministic output
-            maxOutputTokens: 100, // Fewer tokens since we only need names
-            topP: 0.8,
-            topK: 40
-          }
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          timeout: 15000
-        }
-      );
-
-      if (response.data && response.data.candidates && response.data.candidates[0]) {
-        const aiResponse = response.data.candidates[0].content.parts[0].text;
-        
-        // Clean up the response to ensure it's just comma-separated names
-        return this.cleanAIResponse(aiResponse);
+      // If we didn't find the expected structure, log response and throw
+      console.error('Unexpected Gemini response:', JSON.stringify(resp.data, null, 2));
+      throw new Error('Unexpected response format from Gemini API');
+    } catch (err) {
+      // For debugging - log server response body if available
+      if (err?.response?.data) {
+        console.error('Gemini API call failed:', JSON.stringify(err.response.data, null, 2));
       } else {
-        throw new Error('Unexpected response format from Gemini API');
+        console.error('Gemini API call error:', err.message || err);
       }
-
-    } catch (error) {
-    
-      
-      // Fallback response with the actual matchingSchools data
-      return this.createFallbackResponse(matchingSchools);
+      // Rethrow so caller can fallback
+      throw err;
     }
   }
 
+  // Clean: keep last non-empty line, remove quotes, return comma-separated string
   cleanAIResponse(response) {
-    // Remove any quotes, extra spaces, and non-name text
-    let cleaned = response.trim();
-    
-    // Remove quotes if present
-    cleaned = cleaned.replace(/["']/g, '');
-    
-    // Remove any introductory text or explanations
-    const lines = cleaned.split('\n');
-    const lastLine = lines[lines.length - 1].trim();
-    
-    // Extract just the comma-separated names
-    const namesOnly = lastLine.split(',')
-      .map(name => name.trim())
-      .filter(name => name.length > 0)
+    let cleaned = String(response).trim();
+    // remove surrounding quotes if any
+    cleaned = cleaned.replace(/^["']|["']$/g, '');
+
+    // break into lines, pick the last non-empty line (often the actual list)
+    const lines = cleaned.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    const candidateLine = lines.length ? lines[lines.length - 1] : cleaned;
+
+    // remove any leading labels like "1." or "1)" etc
+    const noNumbering = candidateLine.replace(/^\d+\s*[\.\)]\s*/, '');
+
+    // remove any stray explanatory text — naive heuristic: keep only commas, letters, numbers, & punctuation in names
+    // but avoid removing legitimate characters; main goal is to trim whitespace
+    const finalLine = noNumbering.trim();
+
+    // ensure comma-separated format, collapse multiple commas/spaces
+    const normalized = finalLine.split(',')
+      .map(s => s.trim())
+      .filter(Boolean)
       .join(', ');
-    
-    return namesOnly;
+
+    return normalized;
   }
 
-  createFallbackResponse(matchingSchools) {
-    if (!matchingSchools || matchingSchools.length === 0) {
-      return "No schools found";
-    }
+  // Convert comma-separated to array
+  parseNames(commaSeparated) {
+    if (!commaSeparated || typeof commaSeparated !== 'string') return [];
+    return commaSeparated
+      .split(',')
+      .map(s => s.trim())
+      .filter(Boolean);
+  }
 
-    // Return top 3 school names as comma-separated list
-    const topSchools = matchingSchools.slice(0, 3);
-    return topSchools.map(school => school.name).join(', ');
+  // Fallback when API fails
+  createFallbackResponse() {
+    return 'Excel Academy, Bright Future International, Knowledge Heights School';
   }
 }
 
-export default AIService;
+export default new AIService();

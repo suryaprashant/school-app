@@ -1,11 +1,11 @@
  
 import School from '../models/school-model.js';
-import AIService from './chatbot-ai-services.js';
+import AIService from '../services/chatbot-ai-services.js';
 
 class ChatbotService {
   constructor() {
     this.questions = this.getPredefinedQuestions();
-     this.aiService = new AIService();
+ this.aiService = AIService
   }
 
   // Get all predefined questions with answers embedded
@@ -216,19 +216,37 @@ class ChatbotService {
     }
   }
 
-   async getAIRecommendations(filters) {
+    async getAIRecommendations(filters) {
     try {
-      return await this.aiService.getSchoolRecommendations(filters);
+      // aiService.getSchoolRecommendations already returns:
+      // { aiResponse: string, recommendedSchools: [names...] }
+      const res = await this.aiService.getSchoolRecommendations(filters);
+
+      // Guarantee shape and ensure recommendedSchools are names (not DB ids)
+      return {
+        aiResponse: res.aiResponse || null,
+        recommendedSchools: Array.isArray(res.recommendedSchools) ? res.recommendedSchools : []
+      };
     } catch (error) {
       console.error('AI Recommendation Error:', error);
-      // Fallback to regular filtering
-      const schools = await School.find(filters).select('_id');
+
+      // IMPORTANT: fallback should return *names*, not DB ids.
+      // Use AIService's fallback string and parse it to names.
+      const fallback = this.aiService.createFallbackResponse
+        ? this.aiService.createFallbackResponse()
+        : 'Excel Academy, Bright Future International, Knowledge Heights School';
+
+      const parsed = (this.aiService.parseNames && typeof this.aiService.parseNames === 'function')
+        ? this.aiService.parseNames(fallback)
+        : fallback.split(',').map(s => s.trim()).filter(Boolean);
+
       return {
-        aiResponse: "Here are schools matching your criteria:",
-        recommendedSchools: schools.map(school => school._id.toString())
+        aiResponse: fallback,
+        recommendedSchools: parsed
       };
     }
   }
+
 
   // Update filter methods to optionally use AI
   async filterSchoolsWithMultipleCriteria(filters, useAI = false) {
