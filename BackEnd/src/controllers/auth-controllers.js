@@ -14,6 +14,7 @@ export const registerUser = async (req, res) => {
   }
 };
 
+
 export const loginUser = async (req, res) => {
   try {
     const { auth, token } = await AuthService.loginUserService(req.body);

@@ -11,7 +11,7 @@ import openAIRoutes from './routes/ai-routes.js';
 import formRoutes from './routes/form-routes.js'
 import ChatbotRoutes from './routes/chatbot-routes.js';
 import { errorHandler } from './middlewares/cloudinary-error-handler.js';
-
+import otpRoutes from "./routes/otp-routes.js";
 
 dotenv.config();
 connectDB();
@@ -32,6 +32,7 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/form', formRoutes);
 app.use('/api', openAIRoutes);
 app.use('/api/chatbot',ChatbotRoutes) ;
+app.use("/api/otp", otpRoutes);
 
 app.use(errorHandler);
 

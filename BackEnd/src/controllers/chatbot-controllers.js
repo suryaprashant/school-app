@@ -40,16 +40,36 @@ const getQuestionsByCategory = async (req, res) => {
 };
 
 // Filter schools by question - RETURN schoolId
+// Filter schools by question - RETURN schoolId (or AI names if useAI)
 const filterByQuestion = async (req, res) => {
   try {
     const { questionId } = req.params;
-    const result = await chatbotService.filterSchoolsByQuestion(parseInt(questionId));
-    
-    res.status(200).json({
-      success: true,
-      count: result.count,
-      schoolIds: result.schools // Changed from 'schools' to 'schoolIds'
-    });
+    const { useAI } = req.query; // Get AI flag from query params
+
+    const useAiFlag = useAI === 'true';
+
+    const result = await chatbotService.filterSchoolsByQuestion(
+      parseInt(questionId),
+      useAiFlag
+    );
+
+    if (useAiFlag) {
+      // AI path => return AI text and recommended school NAMES
+      res.status(200).json({
+        success: true,
+        count: Array.isArray(result.recommendedSchools) ? result.recommendedSchools.length : 0,
+        recommendedSchools: result.recommendedSchools || [],
+        aiResponse: result.aiResponse || null
+      });
+    } else {
+      // DB path => return school IDs
+      res.status(200).json({
+        success: true,
+        count: result.count || (result.schools ? result.schools.length : 0),
+        schoolIds: result.schools || [],
+        aiResponse: null
+      });
+    }
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -58,17 +78,33 @@ const filterByQuestion = async (req, res) => {
   }
 };
 
-// Filter schools with multiple criteria - RETURN schoolId
 const filterWithMultipleCriteria = async (req, res) => {
   try {
     const filters = req.body;
-    const result = await chatbotService.filterSchoolsWithMultipleCriteria(filters);
-    
-    res.status(200).json({
-      success: true,
-      count: result.count,
-      schoolIds: result.schools // Changed from 'schools' to 'schoolIds'
-    });
+    const { useAI } = req.query; // Get AI flag from query params
+
+    const useAiFlag = useAI === 'true';
+
+    const result = await chatbotService.filterSchoolsWithMultipleCriteria(
+      filters,
+      useAiFlag
+    );
+
+    if (useAiFlag) {
+      res.status(200).json({
+        success: true,
+        count: Array.isArray(result.recommendedSchools) ? result.recommendedSchools.length : 0,
+        recommendedSchools: result.recommendedSchools || [],
+        aiResponse: result.aiResponse || null
+      });
+    } else {
+      res.status(200).json({
+        success: true,
+        count: result.count || (result.schools ? result.schools.length : 0),
+        schoolIds: result.schools || [],
+        aiResponse: null
+      });
+    }
   } catch (error) {
     res.status(500).json({
       success: false,

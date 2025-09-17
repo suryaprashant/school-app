@@ -1,9 +1,11 @@
-services 
+ 
 import School from '../models/school-model.js';
+import AIService from '../services/chatbot-ai-services.js';
 
 class ChatbotService {
   constructor() {
     this.questions = this.getPredefinedQuestions();
+ this.aiService = AIService
   }
 
   // Get all predefined questions with answers embedded
@@ -196,44 +198,7 @@ class ChatbotService {
     return this.questions.filter(q => q.field === category);
   }
 
-  // Filter schools based on a specific question - SIMPLIFIED RESPONSE
- async filterSchoolsByQuestion(questionId) {
-    const question = this.questions.find(q => q.id === questionId);
-    
-    if (!question) {
-      throw new Error('Question not found');
-    }
 
-    const filter = {};
-    filter[question.field] = question.value;
-
-    try {
-      const schools = await School.find(filter).select('_id'); // Select only _id
-      
-      // Return school IDs instead of names
-      return {
-        count: schools.length,
-        schools: schools.map(school => school._id)
-      };
-    } catch (error) {
-      throw new Error(`Error filtering schools: ${error.message}`);
-    }
-  }
-
-  // Filter schools with multiple criteria - SIMPLIFIED RESPONSE
-async filterSchoolsWithMultipleCriteria(filters) {
-    try {
-      const schools = await School.find(filters).select('_id'); // Select only _id
-      
-      // Return school IDs instead of names
-      return {
-        count: schools.length,
-        schools: schools.map(school => school._id)
-      };
-    } catch (error) {
-      throw new Error(`Error filtering schools: ${error.message}`);
-    }
-  }
 
  async searchSchoolsByName(searchTerm) {
     try {
@@ -250,7 +215,81 @@ async filterSchoolsWithMultipleCriteria(filters) {
       throw new Error(`Error searching schools: ${error.message}`);
     }
   }
+
+    async getAIRecommendations(filters) {
+    try {
+      // aiService.getSchoolRecommendations already returns:
+      // { aiResponse: string, recommendedSchools: [names...] }
+      const res = await this.aiService.getSchoolRecommendations(filters);
+
+      // Guarantee shape and ensure recommendedSchools are names (not DB ids)
+      return {
+        aiResponse: res.aiResponse || null,
+        recommendedSchools: Array.isArray(res.recommendedSchools) ? res.recommendedSchools : []
+      };
+    } catch (error) {
+      console.error('AI Recommendation Error:', error);
+
+      // IMPORTANT: fallback should return *names*, not DB ids.
+      // Use AIService's fallback string and parse it to names.
+      const fallback = this.aiService.createFallbackResponse
+        ? this.aiService.createFallbackResponse()
+        : 'Excel Academy, Bright Future International, Knowledge Heights School';
+
+      const parsed = (this.aiService.parseNames && typeof this.aiService.parseNames === 'function')
+        ? this.aiService.parseNames(fallback)
+        : fallback.split(',').map(s => s.trim()).filter(Boolean);
+
+      return {
+        aiResponse: fallback,
+        recommendedSchools: parsed
+      };
+    }
+  }
+
+
+  // Update filter methods to optionally use AI
+  async filterSchoolsWithMultipleCriteria(filters, useAI = false) {
+    try {
+      if (useAI) {
+        return await this.getAIRecommendations(filters);
+      } else {
+        const schools = await School.find(filters).select('_id');
+        return {
+          count: schools.length,
+          schools: schools.map(school => school._id.toString()),
+          aiResponse: null
+        };
+      }
+    } catch (error) {
+      throw new Error(`Error filtering schools: ${error.message}`);
+    }
+  }
+
+  async filterSchoolsByQuestion(questionId, useAI = false) {
+    const question = this.questions.find(q => q.id === questionId);
+    
+    if (!question) {
+      throw new Error('Question not found');
+    }
+
+    const filter = {};
+    filter[question.field] = question.value;
+
+    if (useAI) {
+      return await this.getAIRecommendations(filter);
+    } else {
+      const schools = await School.find(filter).select('_id');
+      return {
+        count: schools.length,
+        schools: schools.map(school => school._id.toString()),
+        aiResponse: null
+      };
+    }
+  }
 }
+
+
 
 export default ChatbotService;
 

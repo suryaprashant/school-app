@@ -22,11 +22,17 @@ const AuthSchema = new mongoose.Schema(
             required: true,
             enum: ['student', 'parent', 'school'],
         },
+        
         authProvider: {
             type: String,
             required: true,
-            enum: ['google', 'email']
+            enum: ['google', 'email','mobile']
         },
+
+        phoneNumber: {
+            type :String,
+            required:false,
+        }
     },
     {
         timestamps: true,
