@@ -184,7 +184,21 @@ class ChatbotService {
         question: "Schools with rank D",
         field: "rank",
         value: "D"
-      }
+      },
+      {
+        id:30,
+        question : "In my Area",
+        field : "area",
+        value : "Yes"
+      },
+    
+      {
+        id:31,
+        question : "In my City",
+        field : "city",
+        value : "yes"
+      },
+  
     ];
   }
 
@@ -266,12 +280,24 @@ class ChatbotService {
     }
   }
 
-  async filterSchoolsByQuestion(questionId, useAI = false) {
+  async filterSchoolsByQuestion(questionId, useAI = false,area,city) {
     const question = this.questions.find(q => q.id === questionId);
     
     if (!question) {
       throw new Error('Question not found');
+
     }
+
+    if(area){
+      question.value=area;
+    }
+
+    if(city){
+      question.value=city;
+     console.log(city);
+     console.log(question);
+    }
+
 
     const filter = {};
     filter[question.field] = question.value;

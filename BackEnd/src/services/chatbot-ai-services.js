@@ -51,6 +51,7 @@ Example format:
   // Friendly mapping of filter keys -> readable names
   formatFilterName(key) {
     const map = {
+      area :'area',
       feeRange: 'Fee Range',
       board: 'Education Board',
       schoolMode: 'School Type',
@@ -91,7 +92,7 @@ Example format:
     try {
       const resp = await axios.post(url, body, {
         headers: { 'Content-Type': 'application/json' },
-        timeout: 15000,
+        timeout: 30000,
       });
 
       // resp.data.candidates[0].content.parts[0].text is typical
