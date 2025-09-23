@@ -132,4 +132,5 @@ StudentApplicationSchema.pre('save', function (next) {
 
 
 const StudentApplication = mongoose.model("StudentApplication", StudentApplicationSchema);
+export { applicationStatuses };
 export default StudentApplication;
