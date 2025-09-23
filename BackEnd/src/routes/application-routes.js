@@ -1,4 +1,4 @@
-import express from 'express';
+import express from "express";
 import {
   addStudApplication,
   getAllStudApplication,
@@ -9,44 +9,43 @@ import {
   completeExam,
   scheduleStudentInterview,
   updateApplicationStatus
-} from '../controllers/application-controllers.js';
-import { protect, restrictTo } from '../middlewares/auth-middleware.js';
+} from "../controllers/application-controllers.js";
+
+import { protect, restrictTo } from "../middlewares/auth-middleware.js";
 
 const router = express.Router();
 
-// Public routes (if any)
-
-// Protected routes (require authentication)
+// All routes below require authentication
 router.use(protect);
 
 // Student can submit their own application
-router.post('/', addStudApplication);
+router.post("/", restrictTo("student"), addStudApplication);
 
-// Admin/Staff can view all applications
-router.get('/', restrictTo('admin', 'staff'), getAllStudApplication);
+// School users can view all applications
+router.get("/", restrictTo("school"), getAllStudApplication);
 
-// Get specific application (student can view their own, admin/staff can view any)
-router.get('/:studId', getStudApplicationById);
+// Get specific application (student can view their own, school can view any)
+router.get("/:studId", getStudApplicationById);
 
-// Student can update their own application (if status allows)
-router.put('/:studId', updateStudApplication);
+// Student can update their own application
+router.put("/:studId", restrictTo("student"), updateStudApplication);
 
-// Admin/Staff only routes
-router.use(restrictTo('admin', 'staff'));
+// School-only routes
+router.use(restrictTo("school"));
 
 // Schedule written exam
-router.post('/:studId/schedule-exam', scheduleExam);
+router.post("/:studId/schedule-exam", scheduleExam);
 
 // Mark exam as completed (pass/fail)
-router.post('/:studId/complete-exam', completeExam);
+router.post("/:studId/complete-exam", completeExam);
 
 // Schedule interview
-router.post('/:studId/schedule-interview', scheduleStudentInterview);
+router.post("/:studId/schedule-interview", scheduleStudentInterview);
 
-// Update application status (for final decisions)
-router.patch('/:studId/status', updateApplicationStatus);
+// Update application status (final decisions)
+router.patch("/:studId/status", updateApplicationStatus);
 
-// Delete application (admin only)
-router.delete('/:studId', restrictTo('admin'), deleteStudApplication);
+// Delete application (school only)
+router.delete("/:studId", deleteStudApplication);
 
 export default router;

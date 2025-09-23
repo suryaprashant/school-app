@@ -1,4 +1,4 @@
-import School from '../models/school.js';
+import School from '../models/school-model.js';
 
 export const addAdmissionDetails = async (req, res) => {
     try {
