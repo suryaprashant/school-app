@@ -1,8 +1,36 @@
 import mongoose from 'mongoose';
 
+const applicationStatuses = {
+  SUBMITTED: 'submitted',
+  WRITTEN_EXAM_SCHEDULED: 'written_exam_scheduled',
+  WRITTEN_EXAM_COMPLETED: 'written_exam_completed',
+  INTERVIEW_SCHEDULED: 'interview_scheduled',
+  INTERVIEW_COMPLETED: 'interview_completed',
+  SELECTED: 'selected',
+  WAITLISTED: 'waitlisted',
+  REJECTED: 'rejected'
+};
+
 const StudentApplicationSchema = new mongoose.Schema({
 
   studId: { type: mongoose.Schema.Types.ObjectId, ref: 'Student', required: true },
+  status: {
+    type: String,
+    enum: Object.values(applicationStatuses),
+    default: applicationStatuses.SUBMITTED,
+    required: true
+  },
+  statusHistory: [{
+    status: { type: String, enum: Object.values(applicationStatuses) },
+    changedAt: { type: Date, default: Date.now },
+    changedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    notes: String,
+    metadata: mongoose.Schema.Types.Mixed // For storing additional data like scheduled dates
+  }],
+  scheduledDates: {
+    writtenExam: Date,
+    interview: Date
+  },
   name: { type: String, required: true },
   location: { type: String, required: true },
   dob: { type: Date, required: true },
