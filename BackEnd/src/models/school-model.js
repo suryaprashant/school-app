@@ -65,6 +65,7 @@ const SchoolSchema = new mongoose.Schema({
   status: { type: String, required: true, enum: ['pending', 'rejected', 'accepted'], default: "pending" },
   languageMedium: { type: [String], required: true },
   transportAvailable: { type: String, required: false, enum: ['yes', 'no'] },
+  TeacherToStudentRatio : {type : String ,required : false},
 
   photos: [{
     url: String,

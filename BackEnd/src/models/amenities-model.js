@@ -7,10 +7,31 @@ const AmenitiesSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
-  predefinedAmenities: {
-    type: [String],
-    default: []
-  },
+ predefinedAmenities: [{
+  type: String,
+  enum: [
+    "Library",
+    "ComputerLab",
+    "ScienceLab",
+    "Playground",
+    "SportsComplex",
+    "Auditorium",
+    "Cafeteria",
+    "Hostel",
+    "Transportation",
+    "MedicalFacility",
+    "Counseling",
+    "SmartClassrooms",
+    "SwimmingPool",
+    "MusicRoom",
+    "ArtRoom",
+    "CCTV",
+    "WiFi",
+    "Parking",
+    "Security"
+  ]
+}],
+
   customAmenities: {
     type: [String],
      required: false

@@ -24,7 +24,11 @@ const ActivitiesSchema = new mongoose.Schema({
       'Technology Integration',
       'Environmental Awareness'
     ]
-  }]
+  }],
+   customActivities: {
+    type: [String],
+     required: false
+  }
 }, { timestamps: true });
 
 const Activities = mongoose.model('activities', ActivitiesSchema);

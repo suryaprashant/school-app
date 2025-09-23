@@ -8,9 +8,9 @@ import {
 //Add Activities
 export const addActivities = async (req, res) => {
   try {
-    const { schoolId, activities } = req.body;
+    const { schoolId, activities,customActivities } = req.body;
 
-    const savedActivities = await addActivitiesService({ schoolId, activities });
+    const savedActivities = await addActivitiesService({ schoolId, activities,customActivities });
 
     res.status(201).json({ 
         status: "success",
@@ -56,8 +56,9 @@ export const updateActivities = async (req, res) => {
   try {
     const { id: schoolId } = req.params;
     const { activities } = req.body;
+    const {customActivities}=req.body;
 
-    const updatedActivities = await updateActivitiesService(schoolId, activities);
+    const updatedActivities = await updateActivitiesService(schoolId, activities,customActivities);
 
     if (!updatedActivities) {
       return res.status(404).json({
