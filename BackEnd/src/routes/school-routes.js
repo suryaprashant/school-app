@@ -51,6 +51,7 @@ import {
   getBlogById,
 } from "../controllers/blog-controllers.js";
 import { photoUpload, videoUpload } from '../../config/multer.js';
+import {addAdmissionDetails, getAdmissionDetails, updateAdmissionDetails} from '../controllers/admission-controllers.js';
 
 const router = express.Router();
 
@@ -141,5 +142,10 @@ router.post('/predict-schools', predictSchools);
 router.post("/blogs", createBlog);
 router.get("/blogs", getAllBlogs);
 router.get("/blogs/:id", getBlogById);
+
+// Admission Details
+router.post('/schools/admission/:id', ensureAuthenticated, addAdmissionDetails);
+router.get('/schools/admission/:id', getAdmissionDetails);
+router.put('/schools/admission/:id', ensureAuthenticated, updateAdmissionDetails);
 
 export default router;
