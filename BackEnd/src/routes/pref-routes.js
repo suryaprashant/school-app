@@ -4,7 +4,7 @@ import {
   updatePreference, 
   getPreference, 
   predictSchoolPerformance 
-} from "../controllers/pref-controller.js";
+} from "../controllers/pref-controllers.js";
 
 const router = express.Router();
 

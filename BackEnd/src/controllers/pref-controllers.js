@@ -3,6 +3,8 @@ import {
   updatePreferenceService,
   getPreferenceService
 } from "../services/pref-services.js";
+import { predictSchoolsService } from "../services/predictor-services.js";
+
 
 // to predict student performance
 
