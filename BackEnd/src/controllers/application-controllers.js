@@ -1,3 +1,5 @@
+// backend/src/controllers/application-controllers.js
+
 import {
   addStudApplications,
   updateStudApplications,
@@ -20,199 +22,264 @@ const handleError = (res, error, statusCode = 500) => {
   });
 };
 
-export const addStudApplication = async (req, res) => {
-  try {
-    const userId = req.user?._id; // Assuming you have user info in req.user from auth middleware
-    const applicationData = await addStudApplications(req.body, userId);
-    
-    res.status(201).json({
-      status: 'success',
-      message: applicationData.statusMessage || 'Application submitted successfully',
-      data: applicationData
-    });
-  } catch (error) {
-    handleError(res, error, error.status || 500);
+// Helper to map status to friendly message
+const getStatusMessage = (status) => {
+  switch (status) {
+    case 'submitted': return 'Your application has been received and is under review.';
+    case 'written_exam_scheduled': return 'Written exam has been scheduled.';
+    case 'written_exam_completed': return 'Written exam completed. Awaiting result.';
+    case 'interview_scheduled': return 'Interview has been scheduled.';
+    case 'interview_completed': return 'Interview completed. Awaiting result.';
+    case 'selected': return '🎉 Selected! Please complete admission formalities.';
+    case 'waitlisted': return '🟡 Waitlisted. We’ll update you.';
+    case 'rejected': return '❌ Not Selected. Thank you for applying.';
+    default: return 'Status updated.';
   }
 };
 
+// ----------------- Controllers -----------------
+
+// Student submits application
+export const addStudApplication = async (req, res) => {
+  try {
+    const userId = req.user?._id;
+    const applicationData = await addStudApplications(req.body, userId);
+
+    res.status(201).json({
+      status: 'success',
+      message: getStatusMessage(applicationData.status),
+      data: {
+        studentId: applicationData.studId,
+        course: applicationData.course,
+        status: applicationData.status
+      }
+    });
+  } catch (error) {
+    handleError(res, error);
+  }
+};
+
+// School views all applications
 export const getAllStudApplication = async (req, res) => {
   try {
     const { status } = req.query;
     const filters = status ? { status } : {};
-    
     const applications = await getAllStudApplications(filters);
-    
+
     res.status(200).json({
       status: 'success',
       results: applications.length,
-      data: applications
+      data: applications.map(app => ({
+        studentId: app.studId,
+        course: app.course,
+        status: app.status
+      }))
     });
   } catch (error) {
     handleError(res, error);
   }
 };
 
+// Get specific application
 export const getStudApplicationById = async (req, res) => {
   try {
     const application = await getStudApplicationsById(req.params.studId);
-    
+
     if (!application) {
       return res.status(404).json({
         status: 'fail',
-        message: 'No application found with that ID'
+        message: 'Application not found'
       });
     }
-    
+
     res.status(200).json({
       status: 'success',
-      message: application.statusMessage,
-      data: application
+      message: getStatusMessage(application.status),
+      data: {
+        studentId: application.studId,
+        course: application.course,
+        status: application.status,
+        scheduledDates: application.scheduledDates || {}
+      }
     });
   } catch (error) {
     handleError(res, error);
   }
 };
 
+// Student updates their application
 export const updateStudApplication = async (req, res) => {
   try {
-    const userId = req.user?._id; // Assuming you have user info in req.user
-    const updatedApplication = await updateStudApplications(
-      req.params.studId, 
-      req.body,
-      userId
-    );
-    
+    const userId = req.user?._id;
+    const updatedApplication = await updateStudApplications(req.params.studId, req.body, userId);
+
     if (!updatedApplication) {
       return res.status(404).json({
         status: 'fail',
         message: 'No application found with that ID'
       });
     }
-    
+
     res.status(200).json({
       status: 'success',
-      message: updatedApplication.statusMessage || 'Application updated successfully',
-      data: updatedApplication
+      message: getStatusMessage(updatedApplication.status),
+      data: {
+        studentId: updatedApplication.studId,
+        course: updatedApplication.course,
+        status: updatedApplication.status
+      }
     });
   } catch (error) {
     handleError(res, error);
   }
 };
 
-// New controller for scheduling written exam
+// Schedule written exam (school)
 export const scheduleExam = async (req, res) => {
   try {
     const { examDate } = req.body;
     const userId = req.user?._id;
-    
+    const applicationId = req.params.studId;
+
     if (!examDate) {
       return res.status(400).json({
         status: 'fail',
         message: 'Exam date is required'
       });
     }
-    
-    const result = await scheduleWrittenExam(req.params.studId, new Date(examDate), userId);
-    
+
+    const application = await scheduleWrittenExam(applicationId, new Date(examDate), userId);
+
     res.status(200).json({
       status: 'success',
-      message: result.statusMessage,
-      data: result
+      message: application.scheduledDates?.writtenExam
+        ? `Written exam scheduled on ${new Date(application.scheduledDates.writtenExam).toLocaleString()}`
+        : 'Written exam scheduled successfully',
+      data: {
+        studentId: application.studId,
+        course: application.course,
+        status: application.status
+      }
     });
   } catch (error) {
     handleError(res, error);
   }
 };
 
-// New controller for marking exam as completed
-// New controller for marking exam as completed
+// Mark written exam completed
 export const completeExam = async (req, res) => {
   try {
     const { result } = req.body; // 'pass' or 'fail'
     const userId = req.user?._id;
-    
+    const applicationId = req.params.studId;
+
     if (!['pass', 'fail'].includes(result)) {
       return res.status(400).json({
         status: 'fail',
         message: 'Result must be either "pass" or "fail"'
       });
     }
-    
-    const updatedApp = await markExamCompleted(req.params.studId, result, userId);
-    
+
+    const application = await markExamCompleted(applicationId, result, userId);
+
     res.status(200).json({
       status: 'success',
-      message: updatedApp.statusMessage,
-      data: updatedApp
+      message: `Written exam completed. Result: ${application.examResult || result}`,
+      data: {
+        studentId: application.studId,
+        course: application.course,
+        status: application.status
+      }
     });
   } catch (error) {
     handleError(res, error);
   }
 };
 
-// New controller for scheduling interview
+// Schedule interview (school)
 export const scheduleStudentInterview = async (req, res) => {
   try {
     const { interviewDate } = req.body;
     const userId = req.user?._id;
-    
+    const applicationId = req.params.studId;
+
     if (!interviewDate) {
       return res.status(400).json({
         status: 'fail',
         message: 'Interview date is required'
       });
     }
-    
-    const result = await scheduleInterview(req.params.studId, new Date(interviewDate), userId);
-    
+
+    const application = await scheduleInterview(applicationId, new Date(interviewDate), userId);
+
     res.status(200).json({
       status: 'success',
-      message: result.statusMessage,
-      data: result
+      message: application.scheduledDates?.interview
+        ? `Interview scheduled on ${new Date(application.scheduledDates.interview).toLocaleString()}`
+        : 'Interview scheduled successfully',
+      data: {
+        studentId: application.studId,
+        course: application.course,
+        status: application.status
+      }
     });
   } catch (error) {
     handleError(res, error);
   }
 };
 
-// New controller for updating final status
+// Update final status (school)
 export const updateApplicationStatus = async (req, res) => {
   try {
     const { status, notes } = req.body;
     const userId = req.user?._id;
-    
+    const applicationId = req.params.studId;
+
     if (!status) {
       return res.status(400).json({
         status: 'fail',
         message: 'Status is required'
       });
     }
-    
-    const updatedApp = await updateFinalStatus(req.params.studId, status, notes, userId);
-    
+
+    const application = await updateFinalStatus(applicationId, status, notes, userId);
+
+    let statusMessage;
+    if (status === 'selected') statusMessage = '🎉 Selected! Please complete admission formalities.';
+    else if (status === 'waitlisted') statusMessage = '🟡 Waitlisted. We’ll update you.';
+    else if (status === 'rejected') statusMessage = '❌ Not Selected. Thank you for applying.';
+    else statusMessage = 'Status updated.';
+
     res.status(200).json({
       status: 'success',
-      message: updatedApp.statusMessage,
-      data: updatedApp
+      message: statusMessage,
+      data: {
+        studentId: application.studId,
+        course: application.course,
+        status: application.status
+      }
     });
   } catch (error) {
     handleError(res, error);
   }
 };
 
+// Delete application (school)
 export const deleteStudApplication = async (req, res) => {
   try {
-    const deletedApplication = await deleteStudApplications(req.params.studId);
-    
+    const applicationId = req.params.studId;
+    const deletedApplication = await deleteStudApplications(applicationId);
+
     if (!deletedApplication) {
       return res.status(404).json({
         status: 'fail',
         message: 'No application found with that ID'
       });
     }
-    
-    res.status(204).json({
+
+    res.status(200).json({
       status: 'success',
+      message: 'Application deleted successfully',
       data: null
     });
   } catch (error) {
