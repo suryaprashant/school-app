@@ -1,4 +1,4 @@
-import StudentApplication, { applicationStatuses } from '../models/application-model.js';
+import { StudentApplication, applicationStatuses } from '../models/application-model.js';
 
 // Get status message based on status
 const getStatusMessage = (status, scheduledDates = {}) => {
