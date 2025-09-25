@@ -1,9 +1,14 @@
 import School from "../models/school-model.js";
 
-export const searchSchoolsService = async ({ search, boards, cities, state, page, limit }) => {
+export const searchSchoolsService = async ({ search, boards, cities, state,schoolMode, genderType, feeRange, page, limit }) => {
   const boardArrays = boards ? (Array.isArray(boards) ? boards : boards.split(",")) : [];
   const stateArray = state ? (Array.isArray(state) ? state : state.split(",")) : [];
   const cityArray = cities ? (Array.isArray(cities) ? cities : cities.split(",")) : [];
+const modeArray = schoolMode ? (Array.isArray(schoolMode) ? schoolMode : schoolMode.split(",")).map(m => m.toLowerCase()) : [];
+const genderArray = genderType ? (Array.isArray(genderType) ? genderType : genderType.split(",")).map(g => g.toLowerCase()) : [];
+const feeArray = feeRange ? (Array.isArray(feeRange) ? feeRange : feeRange.split(",")) : [];
+
+
 
   const validBoards = [
     'CBSE','ICSE','CISCE','NIOS','SSC','IGCSE','IB','KVS','JNV','DBSE','MSBSHSE','UPMSP','KSEEB',
@@ -22,6 +27,9 @@ export const searchSchoolsService = async ({ search, boards, cities, state, page
   if (boardArrays.length > 0) query.board = { $in: boardArrays };
   if (cityArray.length > 0) query.city = { $in: cityArray };
   if (stateArray.length > 0) query.state = { $in: stateArray };
+if (modeArray.length > 0) query.schoolMode = { $in: modeArray };
+if (genderArray.length > 0) query.genderType = { $in: genderArray };
+if (feeArray.length > 0) query.feeRange = { $in: feeArray };
 
   const skip = (page - 1) * limit;
 

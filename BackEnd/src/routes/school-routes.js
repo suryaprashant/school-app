@@ -62,6 +62,7 @@ router.put("/alumnus/:id", ensureAuthenticated, updateAlumniBySchool);
 router.delete("/alumnus/:id", ensureAuthenticated, deleteAlumniBySchool);
 
 //Searching Schools
+
 router.get("/search", searchSchool);
 router.post("/compare", compareSchools);
 router.get('/filter-feeRange', getSchoolByFeeRange);
