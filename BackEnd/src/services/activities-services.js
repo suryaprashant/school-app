@@ -1,8 +1,8 @@
 import Activities from '../models/activities-model.js';
 
 // Add new activities
-export const addActivitiesService = async ({ schoolId, activities }) => {
-  const newActivities = new Activities({ schoolId, activities });
+export const addActivitiesService = async ({ schoolId, activities ,customActivities}) => {
+  const newActivities = new Activities({ schoolId, activities,customActivities });
   return await newActivities.save();
 };
 
@@ -12,10 +12,11 @@ export const getActivitiesBySchoolIdService = async (schoolId) => {
 };
 
 // Update activities by schoolId
-export const updateActivitiesService = async (schoolId, activities) => {
+export const updateActivitiesService = async (schoolId, activities,customActivities) => {
   return await Activities.findOneAndUpdate(
     { schoolId },
     { activities },
+    {customActivities},
     { new: true , runValidators: true }
   );
 };
