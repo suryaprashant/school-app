@@ -1,5 +1,4 @@
 import express from "express";
-import ensureAuthenticated from "../middlewares/validate-token-middleware.js";
 import {addSchool, getSchoolById, getSchoolsByStatus,  updateSchoolInfo, deleteSchool,uploadSchoolPhotos,
   uploadSchoolVideo,
   deleteSchoolPhoto,
@@ -25,6 +24,9 @@ import {
 } from "../controllers/blog-controllers.js";
 import { photoUpload, videoUpload } from '../../config/multer.js';
 import {addAdmissionDetails, getAdmissionDetails, updateAdmissionDetails} from '../controllers/admission-controllers.js';
+
+import { filterSchoolsByPreferences } from '../controllers/school-controllers.js';
+import ensureAuthenticated from '../middlewares/validate-token-middleware.js';
 
 const router = express.Router();
 
@@ -85,5 +87,10 @@ router.get("/blogs/:id", getBlogById);
 router.post('/schools/admission/:id', ensureAuthenticated, addAdmissionDetails);
 router.get('/schools/admission/:id', getAdmissionDetails);
 router.put('/schools/admission/:id', ensureAuthenticated, updateAdmissionDetails);
+
+// preferences
+router.get('/filter/:studentId', ensureAuthenticated, filterSchoolsByPreferences);
+// router.get('/schools/filter/:studentId', filterSchoolsByPreferences);
+
 
 export default router;

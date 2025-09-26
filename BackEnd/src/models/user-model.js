@@ -46,6 +46,10 @@ const StudentSchema = new mongoose.Schema(
       type: [mongoose.Schema.Types.ObjectId],
       ref: "schools",
       default: []  
+    },
+    preferences: {
+      type: Object,
+      default: {}
     }
     },
     {

@@ -8,16 +8,19 @@ import {
 
 const router = express.Router();
 
-// Add new preference
-router.post("/", addPreference);
+// Predict schools based on student preference
+router.get("/predict/:studentId", predictSchoolPerformance);
+
 
 // Update preference
 router.put("/:studId", updatePreference);
 
+// Add new preference
+router.post("/", addPreference);
+
 // Get preference by student ID
 router.get("/:studId", getPreference);
 
-// Predict schools based on student preference
-router.get("/predict/:studentId", predictSchoolPerformance);
+
 
 export default router;
