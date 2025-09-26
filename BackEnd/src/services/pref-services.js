@@ -16,17 +16,29 @@ export const addPreferenceService = async (data) => {
 
 // Update preference
 export const updatePreferenceService = async (studId, updates) => {
-  const updated = await Preference.findOneAndUpdate(
-    { studentId: studId },
-    updates,
-    { new: true }
-  );
+  try {
+    // First, get the existing preference to validate updates
+    const existingPref = await Preference.findOne({ studentId: studId });
+    if (!existingPref) {
+      throw { status: 404, message: "Preference not found for this student" };
+    }
 
-  if (!updated) {
-    throw {status:400, message:"Preference not found for this student"};
+    // Update the existing document with new values
+    Object.keys(updates).forEach(key => {
+      existingPref[key] = updates[key];
+    });
+
+    // Save with validation
+    const updatedPref = await existingPref.save();
+    
+    return updatedPref;
+  } catch (error) {
+    console.error('Error updating preference:', error);
+    if (error.name === 'ValidationError') {
+      throw { status: 400, message: `Validation error: ${error.message}` };
+    }
+    throw { status: 500, message: error.message || 'Error updating preference' };
   }
-
-  return updated;
 };
 
 // Get preference
