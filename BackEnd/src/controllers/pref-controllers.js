@@ -3,7 +3,9 @@ import {
   getPreferenceService
 } from "../services/pref-services.js";
 import { predictSchoolsService } from "../services/predictor-services.js";
-import Student from "../models/user-model.js"; // Ensure this path is correct
+import { getRecommendedSchools } from "../services/recommendation-service.js";
+import Student from "../models/user-model.js";
+import School from "../models/school-model.js";
 
 // Predict schools based on student preferences
 export const predictSchoolPerformance = async (req, res) => {
@@ -129,6 +131,42 @@ export const getPreference = async (req, res) => {
     res.status(500).json({ 
       status: 'failed', 
       message: err.message || 'Error fetching preferences' 
+    });
+  }
+};
+
+/**
+ * Get recommended schools based on user preferences
+ * @route GET /api/preferences/:studId/recommendations
+ */
+export const getSchoolRecommendations = async (req, res) => {
+  try {
+    const { studId } = req.params;
+    
+    // Get student preferences
+    const student = await Student.findOne({ authId: studId });
+    
+    if (!student || !student.preferences) {
+      return res.status(404).json({
+        status: 'failed',
+        message: 'Student preferences not found'
+      });
+    }
+
+    // Get recommended schools based on preferences
+    const recommendedSchools = await getRecommendedSchools(student.preferences);
+    
+    res.status(200).json({
+      status: 'success',
+      message: 'Recommended schools fetched successfully',
+      data: recommendedSchools
+    });
+    
+  } catch (error) {
+    console.error('Error in getSchoolRecommendations:', error);
+    res.status(500).json({
+      status: 'failed',
+      message: error.message || 'Error fetching school recommendations'
     });
   }
 };
