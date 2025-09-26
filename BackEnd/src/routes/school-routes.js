@@ -149,6 +149,8 @@ router.get("/blogs/:id", getBlogById);
 router.post('/schools/admission/:id', ensureAuthenticated, addAdmissionDetails);
 router.get('/schools/admission/:id', getAdmissionDetails);
 router.put('/schools/admission/:id', ensureAuthenticated, updateAdmissionDetails);
+router.delete('/schools/admission/:id', ensureAuthenticated, deleteAdmissionDetails);
+
 
 // preferences
 router.get('/filter/:studentId', ensureAuthenticated, filterSchoolsByPreferences);
