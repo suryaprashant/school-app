@@ -54,7 +54,7 @@ import {addAdmissionDetails, getAdmissionDetails, updateAdmissionDetails} from '
 
 import { filterSchoolsByPreferences } from '../controllers/school-controllers.js';
 import ensureAuthenticated from '../middlewares/validate-token-middleware.js';
-
+import { deleteAdmissionDetails } from '../controllers/admission-controllers.js';
 const router = express.Router();
 
 // Schools

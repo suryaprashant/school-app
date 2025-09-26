@@ -44,28 +44,7 @@ import {
     }
   };
   
-  // PUT /schools/admission/:id
-//   export const updateAdmissionDetails = async (req, res) => {
-//     try {
-//       const { id: schoolId } = req.params;
-//       const updates = req.body;
-  
-//       const result = await updateAdmissionBySchoolService(schoolId, updates);
-  
-//       res.status(200).json({
-//         status: "success",
-//         message: "Admission details updated successfully",
-//         data: result,
-//       });
-//     } catch (err) {
-//       res.status(err.status || 500).json({
-//         status: "failed",
-//         message: err.message,
-//       });
-//     }
-//   };
-// PUT /schools/admission/:id
-// PUT /schools/admission/:id
+ 
 
 export const updateAdmissionDetails = async (req, res) => {
     try {
@@ -98,7 +77,7 @@ export const updateAdmissionDetails = async (req, res) => {
     }
   };
   
-  // DELETE /schools/admission/:id
+//   DELETE /schools/admission/:id
 export const deleteAdmissionDetails = async (req, res) => {
     try {
       const { id } = req.params; // admission _id
