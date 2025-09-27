@@ -3,12 +3,6 @@ import express from "express";
 import ensureAuthenticated from "../middlewares/validate-token-middleware.js";
 
 import {
-  generateAndSaveStudentPdf,
-   viewStudentPDF,
-  downloadStudentPdf,
-} from "../controllers/student-pdf-controllers.js";
-
-import {
     addStudent,
     updateStudent,
     deleteStudent,
@@ -28,27 +22,34 @@ import {
   getShortlistCount,
 } from "../controllers/shortlist-controllers.js";
 
+import {
+  viewStudentPDF,
+  downloadStudentPdf,
+  generateAndSaveStudentPdf
+} from "../controllers/pdf-controllers.js";
 
 const router = express.Router();
 
-//USER PROFILE
+// USER PROFILE
 router.post('/', ensureAuthenticated, addStudent);
 router.get('/:authId', ensureAuthenticated, getStudent);
 router.put('/:authId', ensureAuthenticated, updateStudent);
 router.delete('/:authId', ensureAuthenticated, deleteStudent);
 
-//Preferences
-router.post("/preferences/",  addPreference);
-router.put("/preferences/:studId",  updatePreference);
-router.get("/preferences/:studId",  getPreference);
+// Preferences
+router.post("/preferences/", ensureAuthenticated, addPreference);
+router.put("/preferences/:studId", ensureAuthenticated, updatePreference);
+router.get("/preferences/:studId", ensureAuthenticated, getPreference);
 
-router.post("/shortlist",  addToShortlist);
-router.get("/shortlist/:authId",  getShortlistedSchools);
-router.get("/shortlist/count/:authId", getShortlistCount);
-router.post("/shortlist/remove", removeShortlist);
+// Shortlist
+router.post("/shortlist", ensureAuthenticated, addToShortlist);
+router.get("/shortlist/:authId", ensureAuthenticated, getShortlistedSchools);
+router.get("/shortlist/count/:authId", ensureAuthenticated, getShortlistCount);
+router.post("/shortlist/remove", ensureAuthenticated, removeShortlist);
 
-router.get("/pdf/view/:studId", viewStudentPDF);
-router.get("/pdf/download/:studId", downloadStudentPdf);
-router.post("/pdf/generate/:studId", generateAndSaveStudentPdf);
+// PDF Operations
+router.get("/pdf/view/:studId", ensureAuthenticated, viewStudentPDF);
+router.get("/pdf/download/:studId", ensureAuthenticated, downloadStudentPdf);
+router.post("/pdf/generate/:studId", ensureAuthenticated, generateAndSaveStudentPdf);
 
 export default router;
