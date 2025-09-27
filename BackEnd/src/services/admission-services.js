@@ -11,11 +11,12 @@ export const getAdmissionBySchoolService = async (schoolId) => {
   return await Admission.find({ schoolId });
 };
 
-// Update admission details by schoolId
-export const updateAdmissionBySchoolService = async (schoolId, updates) => {
-  return await Admission.findOneAndUpdate(
-    { schoolId },
-    { $set: updates },
-    { new: true }
-  );
+// Update admission details by _id
+export const updateAdmissionService = async (admissionId, updates) => {
+  return await Admission.findByIdAndUpdate(admissionId, updates, { new: true });
+};
+
+// Delete admission details by _id
+export const deleteAdmissionService = async (admissionId) => {
+  return await Admission.findByIdAndDelete(admissionId);
 };
