@@ -33,7 +33,13 @@ const reviewSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "students",
     default: []
-  }]
+  }],
+  // --- NEW FIELD ADDED ---
+  status: {
+    type: String,
+    enum: ['Pending', 'Accepted', 'Rejected'],
+    default: 'Pending'
+  }
 }, { timestamps: true });
 
 export default mongoose.model('reviews', reviewSchema);
