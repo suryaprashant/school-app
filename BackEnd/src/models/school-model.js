@@ -47,7 +47,7 @@ const SchoolSchema = new mongoose.Schema({
       "50000 - 75000",
       "75000 - 100000",
       "1 Lakh - 2 Lakh",
-      "2 Lakh - 3 Lakh",
+      "2 Lakh - 3 Lakh",     
       "3 Lakh - 4 Lakh",
       "4 Lakh - 5 Lakh",
       "More than 5 Lakh"
