@@ -26,12 +26,8 @@ import {
 import { photoUpload, videoUpload } from '../../config/multer.js';
 import {addAdmissionDetails, getAdmissionDetails, updateAdmissionDetails} from '../controllers/admission-controllers.js';
 
-import {
-  addAdmissionStatus,
-  getAdmissionStatusByStudent,
-  updateAdmissionStatus,
-  deleteAdmissionStatus,
-} from "../controllers/admission-status-controller.js";
+import { addFaculty, getFaculty, updateFaculty, deleteFaculty } from "../controllers/faculty-details-controllers.js";
+
 
 import { filterSchoolsByPreferences } from '../controllers/school-controllers.js';
 import ensureAuthenticated from '../middlewares/validate-token-middleware.js';
@@ -99,14 +95,20 @@ router.delete('/schools/admission/:id', ensureAuthenticated, deleteAdmissionDeta
 
 
 // Admission Status
-router.post('/schools/admission-status', ensureAuthenticated, addAdmissionStatus);
-router.get('/schools/admission-status/:studentId', getAdmissionStatusByStudent);
-router.put('/schools/admission-status/:studentId/:schoolId', ensureAuthenticated, updateAdmissionStatus);
-router.delete('/schools/admission-status/:studentId/:schoolId', ensureAuthenticated, deleteAdmissionStatus);
+// router.post('/schools/admission-status', ensureAuthenticated, addAdmissionStatus);
+// router.get('/schools/admission-status/:studentId', getAdmissionStatusByStudent);
+// router.put('/schools/admission-status/:studentId/:schoolId', ensureAuthenticated, updateAdmissionStatus);
+// router.delete('/schools/admission-status/:studentId/:schoolId', ensureAuthenticated, deleteAdmissionStatus);
 
 // preferences
 router.get('/filter/:studentId', ensureAuthenticated, filterSchoolsByPreferences);
-// router.get('/schools/filter/:studentId', filterSchoolsByPreferences);
+
+// Faculty Details
+router.post("/:schoolId/faculty", addFaculty);
+router.get("/:schoolId/faculty", getFaculty);
+router.put("/:schoolId/faculty/:facultyId", updateFaculty);
+router.delete("/:schoolId/faculty/:facultyId", deleteFaculty);
+
 
 
 export default router;
