@@ -17,4 +17,5 @@ router.post('/google', googleAuth);
 
 router.get('/verify-email/:token', verifyEmail);
 
+
 export default router;

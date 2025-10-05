@@ -1,28 +1,47 @@
 // src/services/chatbot-ai-services.js
 import axios from 'axios';
+import School from '../models/school-model.js';
 
 class AIService {
   constructor() {
     this.apiKey = process.env.API_KEY; // set in .env
     this.baseUrl = 'https://generativelanguage.googleapis.com/v1beta';
-    this.model = 'models/gemini-1.5-flash'; // model to use
+    // this.model = 'models/gemini-1.5-flash'; // model to use
+    this.model = 'models/gemini-1.5-flash-latest';
   }
 
   /**
    * Public method: returns { aiResponse, recommendedSchools }
    * - aiResponse: cleaned text returned by AI (comma-separated names)
-   * - recommendedSchools: array of names (split and trimmed)
+   * - recommendedSchools: array of ACTUAL school names from database
    */
   async getSchoolRecommendations(filters = {}) {
     try {
-      const promptText = this.buildPrompt(filters);
-      const aiText = await this.callGeminiAI(promptText);
-
-      // aiText is a single comma separated string
-      const recommendedSchools = this.parseNames(aiText);
+      // Instead of generating fake names, query the database for real schools
+      const query = {};
+      
+      if (filters.board) query.board = filters.board;
+      if (filters.schoolMode) query.schoolMode = filters.schoolMode;
+      if (filters.genderType) query.genderType = filters.genderType;
+      if (filters.state) query.state = filters.state;
+      if (filters.city) query.city = filters.city;
+      
+      // Get real schools from database
+      const schools = await School.find(query).limit(10).select('name');
+      const schoolNames = schools.map(school => school.name);
+      
+      if (schoolNames.length === 0) {
+        // If no schools found, return fallback
+        const fallback = this.createFallbackResponse();
+        return {
+          aiResponse: 'No schools found matching your criteria',
+          recommendedSchools: this.parseNames(fallback),
+        };
+      }
+      
       return {
-        aiResponse: aiText,
-        recommendedSchools,
+        aiResponse: schoolNames.join(', '),
+        recommendedSchools: schoolNames,
       };
     } catch (err) {
       console.error('AIService.getSchoolRecommendations error:', err);

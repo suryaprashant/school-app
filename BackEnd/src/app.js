@@ -31,7 +31,8 @@ app.use(cors());
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/schools', schoolRoutes);   
+app.use('/api/schools', schoolRoutes);
+app.use('/api/admin', schoolRoutes); // Admin routes for schools   
 app.use('/api/application', applicationRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/form', formRoutes);

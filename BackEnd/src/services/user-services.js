@@ -15,10 +15,22 @@ export const addStudentService = async (data) => {
 
 // Update student
 export const updateStudentService = async (authId, updates) => {
+  // Handle preferences separately to ensure proper nested object update
+  const updateQuery = {};
+  
+  if (updates.preferences) {
+    // Use $set for nested preferences object
+    updateQuery.$set = { preferences: updates.preferences };
+    delete updates.preferences;
+  }
+  
+  // Merge remaining updates
+  Object.assign(updateQuery, updates);
+  
   const updatedStudent = await Student.findOneAndUpdate(
     { authId },
-    updates,
-    { new: true }
+    updateQuery,
+    { new: true, runValidators: true }
   );
 
   if (!updatedStudent) {
