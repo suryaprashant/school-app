@@ -9,7 +9,6 @@ const ExchangeProgramSchema = new mongoose.Schema({
   },
   programType: {
     type: String,
-    
     enum: ['Student Exchange', 'Faculty Exchange', 'Summer Program', 'Joint Research', 'Cultural Exchange']
   },
   duration: {
