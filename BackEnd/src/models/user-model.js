@@ -37,6 +37,10 @@ const StudentSchema = new mongoose.Schema(
             type: String,
             required: true
         },
+        area : {
+            type:String,
+            required:false
+        },
         userType: {
             type: String,
             enum: ['student','parent'], // Since this is only for students

@@ -44,13 +44,15 @@ const getQuestionsByCategory = async (req, res) => {
 const filterByQuestion = async (req, res) => {
   try {
     const { questionId } = req.params;
-    const { useAI } = req.query; // Get AI flag from query params
+    const { useAI , area , city } = req.query; // Get AI flag from query params
 
     const useAiFlag = useAI === 'true';
 
     const result = await chatbotService.filterSchoolsByQuestion(
       parseInt(questionId),
-      useAiFlag
+      useAiFlag,
+      area,
+      city
     );
 
     if (useAiFlag) {

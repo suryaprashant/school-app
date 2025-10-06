@@ -16,6 +16,13 @@ import {searchSchool} from '../controllers/search-controllers.js';
 import { compareSchools } from "../controllers/compare-controllers.js";
 import {getSchoolByFeeRange, getSchoolByShift } from '../controllers/filter-controllers.js';
 import { getSchoolCardData } from "../controllers/card-controllers.js";
+import { addInfrastructure, getInfrastructureById, updateInfrastructure } from '../controllers/infrastructure-controllers.js';
+import { addOtherDetails, getOtherDetailsById, updateOtherDetails } from '../controllers/other-detail-controller.js';
+import { 
+  addFeesAndScholarships, 
+  getFeesAndScholarshipsById, 
+  updateFeesAndScholarships 
+} from '../controllers/fees-scholarship-controllers.js';
 import {addSupport, getSupportByStudId, getSupportBySupId ,deleteSupportBySupId} from '../controllers/support-controllers.js';
 import { predictSchools } from "../controllers/predictor-controllers.js";
 import {
@@ -68,7 +75,23 @@ router.get("/alumnus/:id", getAlumniBySchool);
 router.put("/alumnus/:id", ensureAuthenticated, updateAlumniBySchool);
 router.delete("/alumnus/:id", ensureAuthenticated, deleteAlumniBySchool);
 
+//infrastruture
+router.post('/schools/infrastructure/', addInfrastructure);
+router.get('/schools/infrastructure/:id', getInfrastructureById);
+router.put('/schools/infrastructure/:id', updateInfrastructure);
+
+//other-details
+router.post('/schools/other-details/', addOtherDetails);
+router.get('/schools/other-details/:id', getOtherDetailsById);
+router.put('/schools/other-details/:id', updateOtherDetails);
+
+//feesAndScholarship-details
+router.post('/schools/fees-scholarships/', addFeesAndScholarships);
+router.get('/schools/fees-scholarships/:id', getFeesAndScholarshipsById);
+router.put('/schools/fees-scholarships/:id', updateFeesAndScholarships);
+
 //Searching Schools
+
 router.get("/search", searchSchool);
 router.post("/compare", compareSchools);
 router.get('/filter-feeRange', getSchoolByFeeRange);
