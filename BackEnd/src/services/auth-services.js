@@ -51,6 +51,10 @@ export const verifyEmailService = async (token) => {
   const { email, id } = jwt.verify(token, process.env.SECRET);
   const auth = await Auth.findOne({ email });
 
+  if (!auth) {
+    throw { status: 404, message: 'User not found' };
+  }
+
   if (!auth.isEmailVerified) {
     auth.isEmailVerified = true;
     await auth.save();
@@ -63,7 +67,6 @@ export const verifyEmailService = async (token) => {
 export const resetPasswordService = async (token, oldPassword, newPassword) => {
   const { email } = jwt.verify(token, process.env.SECRET);
   const auth = await Auth.findOne({ email });
-
   if (auth.password !== oldPassword) throw { status: 403, message: 'Password is incorrect' };
   if (auth.password === newPassword) throw { status: 403, message: 'Password cannot be same' };
 

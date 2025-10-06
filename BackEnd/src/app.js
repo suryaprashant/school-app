@@ -8,7 +8,7 @@ import connectDB from "../config/db.js";
 import authRoutes from './routes/auth-routes.js';
 import userRoutes from './routes/user-routes.js';
 import schoolRoutes from './routes/school-routes.js';
-import applicationRoutes from './routes/application-routes.js'; 
+import applicationRoutes from './routes/application-routes.js';
 import reviewRoutes from './routes/review-routes.js';
 import openAIRoutes from './routes/ai-routes.js';
 import formRoutes from './routes/form-routes.js';
@@ -33,7 +33,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/schools', schoolRoutes);
 app.use('/api/admin', schoolRoutes); // Admin routes for schools   
-app.use('/api/application', applicationRoutes);
+app.use('/api/applications', applicationRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/form', formRoutes);
 app.use('/api', openAIRoutes);
