@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 
 // Sub-schema for an individual class fee structure
 const ClassFeeSchema = new mongoose.Schema({
@@ -32,6 +32,10 @@ const FeesAndScholarshipsSchema = new mongoose.Schema({
     ref: 'schools',
     required: true,
     unique: true
+  },
+  feesTransparency: {
+    type: Number,
+    min: [0, 'cannot be negative']
   },
   classFees: [ClassFeeSchema],
   scholarships: [ScholarshipSchema]

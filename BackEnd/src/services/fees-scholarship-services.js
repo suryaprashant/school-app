@@ -3,6 +3,7 @@ import FeesAndScholarships from '../models/fees-scholarship-model.js';
 /**
  * Adds new fees and scholarships details for a school.
  */
+
 export const addFeesAndScholarshipsService = async (data) => {
   const newDetails = new FeesAndScholarships(data);
   return await newDetails.save();
