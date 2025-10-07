@@ -1,6 +1,6 @@
 import express from "express";
 import ensureAuthenticated from "../middlewares/validate-token-middleware.js";
-import {addSchool, getSchoolById, getSchoolsByStatus,  updateSchoolInfo, deleteSchool,uploadSchoolPhotos,
+import {addSchool, getSchoolById, getSchoolsByStatus, getNearbySchools, updateSchoolInfo, deleteSchool,uploadSchoolPhotos,
   uploadSchoolVideo,
   deleteSchoolPhoto,
   deleteSchoolVideo,
@@ -42,7 +42,7 @@ import {
   addAcademics, 
   getAcademicsById, 
   updateAcademics 
-} from '../controllers/academics-controllers.js';
+} from '../controllers/academic-controllers.js';
 import {addSupport, getSupportByStudId, getSupportBySupId ,deleteSupportBySupId} from '../controllers/support-controllers.js';
 import { predictSchools } from "../controllers/predictor-controllers.js";
 import {
@@ -57,6 +57,8 @@ const router = express.Router();
 // Schools
 router.post('/schools/', addSchool);
 router.get('/schools/status/:status', getSchoolsByStatus);
+router.get('/schools/nearby', getNearbySchools);
+
 router.get('/schools/:id', getSchoolById);
 router.put('/schools/:id', updateSchoolInfo);
 router.delete('/schools/:id', deleteSchool);

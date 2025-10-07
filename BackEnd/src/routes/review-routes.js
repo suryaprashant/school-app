@@ -20,17 +20,17 @@ router.patch("/like/:studentId/:reviewId", likeReview);
 
 // This route now only fetches ACCEPTED reviews for the given school, as per the service logic.
 
-router.get("/admin/:schoolId", getReviewsBySchool);
+router.get("/:schoolId", getReviewsBySchool);
 
 
 // Get all reviews with 'Pending' status
-router.get("/admin/pending/all", getPendingReviews);
+router.get("/pending/all", getPendingReviews);
 
 // Change a review's status to 'Accepted'
-router.patch("/admin/accept/:reviewId", acceptReview);
+router.patch("/accept/:reviewId", acceptReview);
 
 // Delete a review (i.e., Reject it)
-router.delete("/admin/reject/:reviewId", rejectReview);
+router.delete("/reject/:reviewId", rejectReview);
 
 
 export default router;

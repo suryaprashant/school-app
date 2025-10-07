@@ -11,6 +11,7 @@ import {
   getSchoolPhotoService,
   getSchoolPhotosService,
   getSchoolVideoService,
+  getNearbySchoolsService,
   getSchoolVideosService
 } from '../services/school-services.js';
 
@@ -270,6 +271,41 @@ export const getSchoolVideo = async (req, res) => {
     });
   } catch (error) {
     res.status(error.statusCode || 500).json({
+      status: 'Failed',
+      message: error.message
+    });
+  }
+};
+
+// --- UPDATE THIS CONTROLLER FUNCTION ---
+export const getNearbySchools = async (req, res) => {
+  try {
+    // 1. Get 'state' from the query parameters as well
+    const { lat, lon, state } = req.query;
+
+    if (!lat || !lon || !state) {
+      return res.status(400).json({ message: 'Latitude, longitude, and state are required.' });
+    }
+
+    // 2. Pass all three parameters to the service
+    const schools = await getNearbySchoolsService(parseFloat(lon), parseFloat(lat), state);
+    
+    const cardData = schools.map(school => ({
+        schoolId: school._id,
+        name: school.name,
+        // ... all other fields for the card model
+        latitude: school.latitude,
+        longitude: school.longitude,
+    }));
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Fetched nearby schools successfully',
+      data: cardData
+    });
+
+  } catch (error) {
+    res.status(500).json({
       status: 'Failed',
       message: error.message
     });

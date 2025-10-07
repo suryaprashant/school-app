@@ -301,3 +301,43 @@ export const getSchoolVideoService = async (schoolId, publicId) => {
   
   return video;
 };
+// Make sure this helper function is in the file
+function getDistanceInKm(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Radius of the Earth in km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+export const getNearbySchoolsService = async (longitude, latitude, state) => {
+  console.log(`--- DEBUG: Searching for schools with status: "accepted" and state: "${state}" ---`);
+
+  // Find schools matching the state
+  const stateSchools = await School.find({ status: 'accepted', state: state });
+
+  console.log(`--- DEBUG: Found ${stateSchools.length} schools in that state.`);
+
+  if (stateSchools.length === 0) {
+    console.log("--- DEBUG: Since no schools were found for the state, the filter will stop here.");
+    return [];
+  }
+
+  // Filter the found schools by distance
+  const nearbySchools = stateSchools.filter(school => {
+    if (!school.latitude || !school.longitude) {
+      console.log(`--- DEBUG: Skipping school "${school.name}" because it has no coordinates.`);
+      return false;
+    }
+    const distance = getDistanceInKm(latitude, longitude, school.latitude, school.longitude);
+    console.log(`--- DEBUG: Distance to "${school.name}" is ${distance.toFixed(2)} km.`);
+    return distance <= 4;
+  });
+  
+  console.log(`--- DEBUG: After filtering, found ${nearbySchools.length} schools within 4km.`);
+  return nearbySchools;
+};
