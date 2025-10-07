@@ -41,6 +41,14 @@ const StudentSchema = new mongoose.Schema(
             type:String,
             required:false
         },
+          latitude: {
+    type: Number,
+ required : false
+  },
+  longitude: {
+    type: Number,
+   required:false
+  },
         userType: {
             type: String,
             enum: ['student','parent'], // Since this is only for students

@@ -9,6 +9,21 @@ getSchoolVideos,
 getSchoolPhotos,
 getSchoolVideo
 } from '../controllers/school-controllers.js';
+import { 
+  addTechnologyAdoption, 
+  getTechnologyAdoptionById, 
+  updateTechnologyAdoption 
+} from '../controllers/technology-adoption-controllers.js';
+import { 
+  addInternationalExposure, 
+  getInternationalExposureById, 
+  updateInternationalExposure 
+} from '../controllers/international-exposure-controllers.js';
+import { 
+  addSafetyAndSecurity, 
+  getSafetyAndSecurityById, 
+  updateSafetyAndSecurity 
+} from '../controllers/safety-security-controllers.js';
 import {addAmenities, getAmenitiesById, updateAmenities} from '../controllers/amenities-controllers.js';
 import {addActivities, getActivitiesById, updateActivities} from '../controllers/activities-controllers.js';
 import {addAlumni, getAlumniBySchool, deleteAlumniBySchool, updateAlumniBySchool} from '../controllers/alumni-controllers.js';
@@ -23,6 +38,11 @@ import {
   getFeesAndScholarshipsById, 
   updateFeesAndScholarships 
 } from '../controllers/fees-scholarship-controllers.js';
+import { 
+  addAcademics, 
+  getAcademicsById, 
+  updateAcademics 
+} from '../controllers/academics-controllers.js';
 import {addSupport, getSupportByStudId, getSupportBySupId ,deleteSupportBySupId} from '../controllers/support-controllers.js';
 import { predictSchools } from "../controllers/predictor-controllers.js";
 import {
@@ -78,13 +98,32 @@ router.post('/schools/other-details/', addOtherDetails);
 router.get('/schools/other-details/:id', getOtherDetailsById);
 router.put('/schools/other-details/:id', updateOtherDetails);
 
+//acedmics-details
+router.post('/schools/academics/', addAcademics);
+router.get('/schools/academics/:id', getAcademicsById);
+router.put('/schools/academics/:id', updateAcademics);
+
 //feesAndScholarship-details
 router.post('/schools/fees-scholarships/', addFeesAndScholarships);
 router.get('/schools/fees-scholarships/:id', getFeesAndScholarshipsById);
 router.put('/schools/fees-scholarships/:id', updateFeesAndScholarships);
 
-//Searching Schools
+//technologyAndAdoption-details
+router.post('/schools/technology-adoption/', addTechnologyAdoption);
+router.get('/schools/technology-adoption/:id', getTechnologyAdoptionById);
+router.put('/schools/technology-adoption/:id', updateTechnologyAdoption);
 
+//safety-security-details
+router.post('/schools/safety-security/', addSafetyAndSecurity);
+router.get('/schools/safety-security/:id', getSafetyAndSecurityById);
+router.put('/schools/safety-security/:id', updateSafetyAndSecurity);
+
+//international-exposure-details
+router.post('/schools/international-exposure/', addInternationalExposure);
+router.get('/schools/international-exposure/:id', getInternationalExposureById);
+router.put('/schools/international-exposure/:id', updateInternationalExposure);
+
+//Searching Schools
 router.get("/search", searchSchool);
 router.post("/compare", compareSchools);
 router.get('/filter-feeRange', getSchoolByFeeRange);

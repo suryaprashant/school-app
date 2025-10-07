@@ -6,13 +6,13 @@ import streamifier from 'streamifier';
 // Add school
 export const addSchoolService = async (data) => {
   const {
-    name, description, board, state, city,area, schoolMode, genderType, shifts, feeRange,
+    name, description, board, state, city,area, latitude,longitude,schoolMode, genderType, shifts, feeRange,
     address, pinCode, upto, email, mobileNo, specialist, tags, website, status,
     languageMedium, transportAvailable,rank, TeacherToStudentRatio
   } = data;
 
   const school = new School({
-    name, description, board, state, city,area, schoolMode, genderType, shifts, feeRange,
+    name, description, board, state, city,area,latitude,longitude, schoolMode, genderType, shifts, feeRange,
     address, pinCode, upto, email, mobileNo, specialist, tags, website, status,
     languageMedium, transportAvailable,rank, TeacherToStudentRatio
   });
