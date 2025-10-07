@@ -18,16 +18,16 @@ import {getSchoolByFeeRange, getSchoolByShift } from '../controllers/filter-cont
 import { getSchoolCardData } from "../controllers/card-controllers.js";
 import { addInfrastructure, getInfrastructureById, updateInfrastructure } from '../controllers/infrastructure-controllers.js';
 import { addOtherDetails, getOtherDetailsById, updateOtherDetails } from '../controllers/other-detail-controller.js';
-import { 
-  addFeesAndScholarships, 
-  getFeesAndScholarshipsById, 
-  updateFeesAndScholarships 
+import {
+  addFeesAndScholarships,
+  getFeesAndScholarshipsById,
+  updateFeesAndScholarships
 } from '../controllers/fees-scholarship-controllers.js';
-import { 
-  addAcademics, 
-  getAcademicsById, 
-  updateAcademics 
-} from '../controllers/academics-controllers.js';
+import {
+  addAcademics,
+  getAcademicsById,
+  updateAcademics
+} from '../controllers/academic-controllers.js';
 import {addSupport, getSupportByStudId, getSupportBySupId ,deleteSupportBySupId} from '../controllers/support-controllers.js';
 import { predictSchools } from "../controllers/predictor-controllers.js";
 import {
@@ -36,6 +36,7 @@ import {
   getBlogById,
 } from "../controllers/blog-controllers.js";
 import { photoUpload, videoUpload } from '../../config/multer.js';
+import {addTechnologyAdoption, getTechnologyAdoptionById, updateTechnologyAdoption} from '../controllers/technology-adoption-controllers.js';
 import {addAdmissionDetails, getAdmissionDetails, updateAdmissionDetails} from '../controllers/admission-controllers.js';
 
 import {
@@ -54,7 +55,7 @@ const router = express.Router();
 router.post('/schools/', addSchool);
 router.get('/schools/status/:status', getSchoolsByStatus);
 router.get('/schools/:id', getSchoolById);
-router.put('/schools/:id', updateSchoolInfo);
+router.get('/schools/filter/:studentId', ensureAuthenticated, filterSchoolsByPreferences);
 router.delete('/schools/:id', deleteSchool);
 
 router.post('/:id/upload/photos', photoUpload.array('files', 4), uploadSchoolPhotos); // 5MB limit
@@ -109,15 +110,15 @@ router.post('/schools/technology-adoption/', addTechnologyAdoption);
 router.get('/schools/technology-adoption/:id', getTechnologyAdoptionById);
 router.put('/schools/technology-adoption/:id', updateTechnologyAdoption);
 
-//safety-security-details
-router.post('/schools/safety-security/', addSafetyAndSecurity);
-router.get('/schools/safety-security/:id', getSafetyAndSecurityById);
-router.put('/schools/safety-security/:id', updateSafetyAndSecurity);
+//safety-security-details - TODO: Create safety-security-controllers.js
+// router.post('/schools/safety-security/', addSafetyAndSecurity);
+// router.get('/schools/safety-security/:id', getSafetyAndSecurityById);
+// router.put('/schools/safety-security/:id', updateSafetyAndSecurity);
 
-//international-exposure-details
-router.post('/schools/international-exposure/', addInternationalExposure);
-router.get('/schools/international-exposure/:id', getInternationalExposureById);
-router.put('/schools/international-exposure/:id', updateInternationalExposure);
+//international-exposure-details - TODO: Create international-exposure-controllers.js
+// router.post('/schools/international-exposure/', addInternationalExposure);
+// router.get('/schools/international-exposure/:id', getInternationalExposureById);
+// router.put('/schools/international-exposure/:id', updateInternationalExposure);
 
 //Searching Schools
 router.get("/search", searchSchool);
