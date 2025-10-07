@@ -28,7 +28,7 @@ app.use(cors());
 // Routes for the API calls
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/admin', schoolRoutes);  // <-- Admission status lives here
+app.use('/api/schools', schoolRoutes);  // School routes including admin status updates
 app.use('/api/application', applicationRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/form', formRoutes);

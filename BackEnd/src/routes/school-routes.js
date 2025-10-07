@@ -45,14 +45,15 @@ import {
   updateAdmissionStatus,
   deleteAdmissionStatus,
 } from "../controllers/admission-status-controller.js";
-
 import { filterSchoolsByPreferences } from '../controllers/school-controllers.js';
 import ensureAuthenticated from '../middlewares/validate-token-middleware.js';
 import { deleteAdmissionDetails } from '../controllers/admission-controllers.js';
 
+import { updateSchoolStatus } from '../controllers/admin-controller.js';
+import { protectAdmin } from '../middlewares/adminAuth-middleware.js';
+
 const router = express.Router();
 // Schools
-router.post('/schools/', addSchool);
 router.get('/schools/status/:status', getSchoolsByStatus);
 router.get('/schools/:id', getSchoolById);
 router.get('/schools/filter/:studentId', ensureAuthenticated, filterSchoolsByPreferences);
@@ -157,4 +158,8 @@ router.get('/filter/:studentId', ensureAuthenticated, filterSchoolsByPreferences
 // router.get('/schools/filter/:studentId', filterSchoolsByPreferences);
 
 
-export default router;
+router.patch('/schools/:id/status', ensureAuthenticated, protectAdmin, updateSchoolStatus);
+
+
+
+export default router;  
