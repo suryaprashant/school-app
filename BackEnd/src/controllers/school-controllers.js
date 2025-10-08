@@ -290,18 +290,12 @@ export const getNearbySchools = async (req, res) => {
     // 2. Pass all three parameters to the service
     const schools = await getNearbySchoolsService(parseFloat(lon), parseFloat(lat), state);
     
-    const cardData = schools.map(school => ({
-        schoolId: school._id,
-        name: school.name,
-        // ... all other fields for the card model
-        latitude: school.latitude,
-        longitude: school.longitude,
-    }));
+   
 
     res.status(200).json({
       status: 'success',
       message: 'Fetched nearby schools successfully',
-      data: cardData
+      data: schools
     });
 
   } catch (error) {
