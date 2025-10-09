@@ -301,6 +301,7 @@ export const getSchoolVideoService = async (schoolId, publicId) => {
   
   return video;
 };
+
 // Make sure this helper function is in the file
 function getDistanceInKm(lat1, lon1, lat2, lon2) {
   const R = 6371; // Radius of the Earth in km

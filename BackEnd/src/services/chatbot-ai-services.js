@@ -2,17 +2,22 @@
 import axios from 'axios';
 
 class AIService {
+
+  
   constructor() {
     this.apiKey = process.env.API_KEY; // set in .env
     this.baseUrl = 'https://generativelanguage.googleapis.com/v1beta';
     this.model = 'models/gemini-pro-latest'; // model to use
   }
 
+
   /**
    * Public method: returns { aiResponse, recommendedSchools }
    * - aiResponse: cleaned text returned by AI (comma-separated names)
    * - recommendedSchools: array of names (split and trimmed)
    */
+
+
   async getSchoolRecommendations(filters = {}) {
     try {
       const promptText = this.buildPrompt(filters);
@@ -83,7 +88,7 @@ Example format:
       // generationConfig holds temperature, tokens etc.
       generationConfig: {
         temperature: 0.7,
-        maxOutputTokens: 8000,
+        maxOutputTokens: 4000,
         topP: 0.8,
         topK: 40
       }
