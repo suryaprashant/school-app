@@ -1,17 +1,22 @@
-import bcrypt from 'bcryptjs';
+import bcrypt from "bcryptjs";
 import jwt from 'jsonwebtoken';
 import {
   findAdminByEmail,
   createAdmin,
   findAdminById,
   updateAdminById,
+  updateAdminPasswordById,
   findAllUsers,
   updateUserStatusById,
   findSchoolByIdAndUpdateStatus,
   countTotalUsers,
   countTotalSchools,
-} from '../services/admin-sercvices.js';
-import School from '../models/school-model.js';
+  findPendingSchools, // ✅ added
+} from "../services/admin-sercvices.js";
+
+/* =======================
+   🔹 AUTH / ACCOUNT
+   ======================= */
 
 // ✅ Register Admin
 export const registerAdmin = async (req, res) => {
@@ -60,32 +65,6 @@ export const loginAdmin = async (req, res) => {
   }
 };
 
-// ✅ Update School Status
-export const updateSchoolStatus = async (req, res) => {
-  const { id } = req.params;
-  let { status } = req.body;
-
-  try {
-    if (!status)
-      return res.status(400).json({ message: 'Status field is required' });
-
-    status = String(status).toLowerCase();
-    const validStatuses = ['pending', 'rejected', 'accepted'];
-    if (!validStatuses.includes(status))
-      return res.status(400).json({
-        message: `Invalid status value. Valid values are: ${validStatuses.join(', ')}`,
-        providedStatus: status,
-      });
-
-    const updatedSchool = await findSchoolByIdAndUpdateStatus(id, status);
-    if (!updatedSchool) return res.status(404).json({ message: 'School not found' });
-
-    res.json({ message: `School status updated to ${status}`, school: updatedSchool });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-};
-
 // ✅ Admin Profile
 export const getAdminProfile = async (req, res) => {
   try {
@@ -106,25 +85,75 @@ export const updateAdminProfile = async (req, res) => {
   }
 };
 
-// ✅ Change Password
+// ✅ Change Password (uses service)
 export const changeAdminPassword = async (req, res) => {
   try {
-    const { oldPassword, newPassword } = req.body;
-    const admin = await findAdminById(req.admin._id);
-    if (!admin) return res.status(404).json({ message: 'Admin not found' });
+    const { adminId, oldPassword, newPassword } = req.body;
+    const admin = await findAdminById(adminId);
+
+    if (!admin) return res.status(404).json({ message: "Admin not found" });
 
     const isMatch = await bcrypt.compare(oldPassword, admin.password);
-    if (!isMatch) return res.status(401).json({ message: 'Old password incorrect' });
+    if (!isMatch) return res.status(401).json({ message: "Old password incorrect" });
 
-    admin.password = newPassword;
-    await admin.save();
-    res.json({ success: true, message: 'Password changed successfully' });
+    await updateAdminPasswordById(adminId, newPassword);
+
+    res.status(200).json({ success: true, message: "Password updated successfully" });
   } catch (err) {
-    res.status(500).json({ message: 'Password change failed', error: err.message });
+    res.status(500).json({ success: false, message: err.message });
   }
 };
 
-// ✅ Dashboard Stats
+/* =======================
+   🔹 USERS
+   ======================= */
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await findAllUsers();
+    res.status(200).json({ success: true, data: users });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+export const updateUserStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    const user = await updateUserStatusById(id, status);
+    res.status(200).json({ success: true, data: user });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+/* =======================
+   🔹 SCHOOLS
+   ======================= */
+export const updateSchoolStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    const school = await findSchoolByIdAndUpdateStatus(id, status);
+    res.status(200).json({ success: true, data: school });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// ✅ Pending Schools 
+export const getPendingSchools = async (req, res) => {
+  try {
+    const schools = await findPendingSchools();
+    res.status(200).json({ success: true, data: schools });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+/* =======================
+   🔹 STATS
+   ======================= */
 export const getAdminStats = async (req, res) => {
   try {
     const totalUsers = await countTotalUsers();
@@ -132,38 +161,5 @@ export const getAdminStats = async (req, res) => {
     res.json({ success: true, stats: { totalUsers, totalSchools } });
   } catch (err) {
     res.status(500).json({ message: 'Failed to fetch stats', error: err.message });
-  }
-};
-
-// ✅ All Users
-export const getAllUsers = async (req, res) => {
-  try {
-    const users = await findAllUsers();
-    res.json({ success: true, users });
-  } catch (err) {
-    res.status(500).json({ message: 'Failed to fetch users', error: err.message });
-  }
-};
-
-// ✅ Update User Status
-export const updateUserStatus = async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const { status } = req.body;
-    const user = await updateUserStatusById(userId, status);
-    if (!user) return res.status(404).json({ message: 'User not found' });
-    res.json({ success: true, message: 'User status updated', user });
-  } catch (err) {
-    res.status(500).json({ message: 'Failed to update user', error: err.message });
-  }
-};
-// get pending schools
-export const getPendingSchools = async (req, res) => {
-  try {
-    const status = "pending";
-    const schools = await School.find({ status }); // or call your existing service
-    res.status(200).json({ status: "success", data: schools });
-  } catch (err) {
-    res.status(500).json({ status: "failed", message: err.message });
   }
 };

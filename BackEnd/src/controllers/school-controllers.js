@@ -11,30 +11,15 @@ import {
   getSchoolPhotoService,
   getSchoolPhotosService,
   getSchoolVideoService,
-  getSchoolVideosService
+  getSchoolVideosService,
+  filterSchoolsByPreferencesService,
 } from '../services/school-services.js';
-
-import School from '../models/school-model.js';
-import User from '../models/User.js';
 
 export const filterSchoolsByPreferences = async (req, res) => {
   try {
     const { studentId } = req.params;
 
-    const student = await User.findById(studentId);
-    if (!student || !student.preferences) {
-      return res.status(404).json({ message: 'Preferences not found' });
-    }
-
-    const prefs = student.preferences;
-    const query = {};
-
-    if (prefs.boards) query.board = prefs.boards;
-    if (prefs.shift) query.shift = prefs.shift;
-    if (prefs.schoolType) query.schoolType = prefs.schoolType;
-    if (prefs.preferredStandard) query.standards = prefs.preferredStandard;
-
-    const schools = await School.find(query);
+    const schools = await filterSchoolsByPreferencesService(studentId);
 
     res.json({ data: schools });
   } catch (error) {

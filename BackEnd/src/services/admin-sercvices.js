@@ -1,22 +1,40 @@
-import Admin from '../models/admin-model.js';
-import User from '../models/user-model.js';
-import School from '../models/school-model.js';
+import Admin from "../models/admin-model.js";
+import User from "../models/user-model.js";
+import School from "../models/school-model.js";
 
-// ---------- Admin Operations ----------
+/* =======================
+   🔹 ADMIN OPERATIONS
+   ======================= */
 export const findAdminByEmail = async (email) => Admin.findOne({ email });
-export const createAdmin = async (data) => new Admin(data).save();
-export const findAdminById = async (id) => Admin.findById(id).select('-password');
-export const updateAdminById = async (id, data) =>
-  Admin.findByIdAndUpdate(id, data, { new: true, runValidators: true }).select('-password');
 
-// ---------- User Operations ----------
-export const findAllUsers = async () => User.find().select('-password');
-export const updateUserStatusById = async (userId, status) =>
-  User.findByIdAndUpdate(userId, { status }, { new: true });
+export const createAdmin = async (data) => Admin.create(data);
 
-// ---------- School Operations ----------
+export const findAdminById = async (id) => Admin.findById(id);
+
+export const updateAdminById = async (id, updateData) =>
+  Admin.findByIdAndUpdate(id, { $set: updateData }, { new: true, runValidators: false });
+
+// ✅ Update admin password
+export const updateAdminPasswordById = async (id, newPassword) =>
+  Admin.findByIdAndUpdate(id, { $set: { password: newPassword } }, { new: true });
+
+/* =======================
+   🔹 USER OPERATIONS
+   ======================= */
+export const findAllUsers = async () => User.find();
+
+export const updateUserStatusById = async (id, status) =>
+  User.findByIdAndUpdate(id, { $set: { status } }, { new: true });
+
+export const countTotalUsers = async () => User.countDocuments();
+
+/* =======================
+   🔹 SCHOOL OPERATIONS
+   ======================= */
+export const countTotalSchools = async () => School.countDocuments();
+
 export const findSchoolByIdAndUpdateStatus = async (id, status) =>
   School.findByIdAndUpdate(id, { $set: { status } }, { new: true, runValidators: false });
 
-export const countTotalUsers = async () => User.countDocuments();
-export const countTotalSchools = async () => School.countDocuments();
+// ✅ Get all pending schools
+export const findPendingSchools = async () => School.find({ status: "pending" });
