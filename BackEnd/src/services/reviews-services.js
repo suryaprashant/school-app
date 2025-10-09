@@ -10,10 +10,10 @@ export const addReviewService = async (data) => {
     throw { status: 400, message: "Review already exists for this student and school" };
   }
 
-  const student = await Student.findById(studentId);
-  if (!student) {
-    throw { status: 404, message: "Student not found" };
-  }
+  // Use authId from frontend instead of _id
+const student = await Student.findOne({ authId: studentId });
+if (!student) throw { status: 404, message: "Student not found" };
+
 
   const reviewData = {
     schoolId,

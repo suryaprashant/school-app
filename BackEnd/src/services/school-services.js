@@ -1,4 +1,5 @@
 import School from '../models/school-model.js';
+import User from '../models/User.js';
 // From files in src/controllers/ or src/services/
 import cloudinary from '../../config/cloudinary.js';
 import streamifier from 'streamifier';
@@ -6,7 +7,7 @@ import streamifier from 'streamifier';
 // Add school
 export const addSchoolService = async (data) => {
   const {
-    name, description, board, state, city,area, latitude,longitude,schoolMode, genderType, shifts, feeRange,
+    name, description, board, state, city,area, latitude,longitude, schoolMode, genderType, shifts, feeRange,
     address, pinCode, upto, email, mobileNo, specialist, tags, website, status,
     languageMedium, transportAvailable,rank, TeacherToStudentRatio
   } = data;
@@ -247,17 +248,38 @@ export const getSchoolPhotosService = async (schoolId) => {
   return school.photos;
 };
 
-// Get all videos for a school  
+// Get all videos for a school
 export const getSchoolVideosService = async (schoolId) => {
   const school = await School.findById(schoolId).select('videos');
-  
+
   if (!school) {
     const error = new Error('School not found');
     error.statusCode = 404;
     throw error;
   }
-  
+
   return school.videos;
+};
+
+// Get specific video by publicId
+export const getSchoolVideoService = async (schoolId, publicId) => {
+  const school = await School.findById(schoolId);
+
+  if (!school) {
+    const error = new Error('School not found');
+    error.statusCode = 404;
+    throw error;
+  }
+
+  const video = school.videos.find(video => video.publicId === publicId);
+
+  if (!video) {
+    const error = new Error('Video not found');
+    error.statusCode = 404;
+    throw error;
+  }
+
+  return video;
 };
 
 // Get specific photo by publicId
@@ -281,23 +303,24 @@ export const getSchoolPhotoService = async (schoolId, publicId) => {
   return photo;
 };
 
-// Get specific video by publicId
-export const getSchoolVideoService = async (schoolId, publicId) => {
-  const school = await School.findById(schoolId);
-  
-  if (!school) {
-    const error = new Error('School not found');
+// Filter schools by student preferences
+export const filterSchoolsByPreferencesService = async (studentId) => {
+  const student = await User.findById(studentId);
+  if (!student || !student.preferences) {
+    const error = new Error('Preferences not found');
     error.statusCode = 404;
     throw error;
   }
-  
-  const video = school.videos.find(video => video.publicId === publicId);
-  
-  if (!video) {
-    const error = new Error('Video not found');
-    error.statusCode = 404;
-    throw error;
-  }
-  
-  return video;
+
+  const prefs = student.preferences;
+  const query = {};
+
+  if (prefs.boards) query.board = prefs.boards;
+  if (prefs.shift) query.shift = prefs.shift;
+  if (prefs.schoolType) query.schoolType = prefs.schoolType;
+  if (prefs.preferredStandard) query.upto = prefs.preferredStandard;
+
+  const schools = await School.find(query);
+
+  return schools;
 };

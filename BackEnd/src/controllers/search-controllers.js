@@ -3,7 +3,17 @@ import {searchSchoolsService} from '../services/search-services.js';
 export const searchSchool = async (req, res) => {
 
   try {
-    let { search, boards, cities, state,schoolMode, genderType, feeRange, page = 1, limit = 10 } = req.query;
+    // Accept aliases from frontend (singular/plural/snake_case)
+    const q = req.query;
+    let search = q.search;
+    let boards = q.boards || q.board;
+    let cities = q.cities || q.city;
+    let state = q.states || q.state;
+    let schoolMode = q.schoolMode || q.school_mode || q.mode;
+    let genderType = q.genderType || q.gender;
+    let feeRange = q.feeRange || q.fee_range;
+    let page = q.page ?? 1;
+    let limit = q.limit ?? 10;
 
     page = parseInt(page);
     limit = parseInt(limit);

@@ -2,44 +2,63 @@ import express from 'express';
 import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "../config/db.js";
-import authRoutes from './routes/auth-routes.js'
-import userRoutes from './routes/user-routes.js'
-import schoolRoutes from './routes/school-routes.js'
-import applicationRoutes from './routes/application-routes.js';
-import reviewRoutes from './routes/review-routes.js'
+
+import authRoutes from './routes/auth-routes.js';
+import userRoutes from './routes/user-routes.js';
+import schoolRoutes from './routes/school-routes.js';
+import applicationRoutes from './routes/application-routes.js'; 
+import reviewRoutes from './routes/review-routes.js';
 import openAIRoutes from './routes/ai-routes.js';
-import formRoutes from './routes/form-routes.js'
+import formRoutes from './routes/form-routes.js';
 import ChatbotRoutes from './routes/chatbot-routes.js';
+import adminRoutes from './routes/admin-routes.js';
 import { errorHandler } from './middlewares/cloudinary-error-handler.js';
 import otpRoutes from "./routes/otp-routes.js";
+import prefRoutes from "./routes/pref-routes.js";
+import { searchSchool } from './controllers/search-controllers.js';
 
 dotenv.config();
 connectDB();
 
 const app = express();
 
-// ✅ Middleware to handle form-data correctly
+// Middleware to handle form-data correctly
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-//Routes for the API calls
+// Routes for the API calls
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/admin', schoolRoutes);
-app.use('/api/applications', applicationRoutes);
+app.use('/api/schools', schoolRoutes);  // School routes including admin status updates
+app.use('/api/application', applicationRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/form', formRoutes);
 app.use('/api', openAIRoutes);
-app.use('/api/chatbot',ChatbotRoutes) ;
+app.use('/api/chatbot', ChatbotRoutes);
+app.use('/api/admin', adminRoutes);
 app.use("/api/otp", otpRoutes);
+app.use("/api/preferences", prefRoutes);
 
+
+
+// Public search alias to support /api/search
+app.get('/api/search', searchSchool);
+
+
+// Health check
+app.get('/api/health', (req, res) => {
+    res.status(200).json({ status: 'ok' });
+});
+
+
+// Global error handler for cloudinary
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
-
+// Catch-all error handler
 app.use((err, req, res, next) => {
     console.error("Global Error:", err);
     res.status(err.status || 500).json({

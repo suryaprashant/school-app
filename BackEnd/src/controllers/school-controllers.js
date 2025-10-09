@@ -11,8 +11,23 @@ import {
   getSchoolPhotoService,
   getSchoolPhotosService,
   getSchoolVideoService,
-  getSchoolVideosService
+  getSchoolVideosService,
+  filterSchoolsByPreferencesService,
 } from '../services/school-services.js';
+
+export const filterSchoolsByPreferences = async (req, res) => {
+  try {
+    const { studentId } = req.params;
+
+    const schools = await filterSchoolsByPreferencesService(studentId);
+
+    res.json({ data: schools });
+  } catch (error) {
+    console.error('Error filtering schools:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 
 // Add school
 export const addSchool = async (req, res) => {

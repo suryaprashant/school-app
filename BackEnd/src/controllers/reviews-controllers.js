@@ -11,10 +11,12 @@ import {
 
 // POST /
 export const addReview = async (req, res) => {
+  console.log("POST /api/reviews hit", req.body); // 🔥 see if request reaches here
   try {
     const data = await addReviewService(req.body);
     res.status(201).json({ status: "success", message: "Review added successfully", data });
   } catch (err) {
+    console.error("Error in addReview:", err);
     res.status(err.status || 500).json({ status: "failed", message: err.message });
   }
 };
