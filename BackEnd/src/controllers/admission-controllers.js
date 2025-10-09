@@ -1,11 +1,15 @@
-import Admission from "../models/admission-model.js";
+import {
+  addAdmissionService,
+  getAdmissionBySchoolService,
+  updateAdmissionService,
+  deleteAdmissionService
+} from "../services/admission-services.js";
 
 // POST - Add admission details for a school
 export const addAdmissionDetails = async (req, res) => {
   try {
     const data = { ...req.body, schoolId: req.params.id };
-    const admission = new Admission(data);
-    const savedAdmission = await admission.save();
+    const savedAdmission = await addAdmissionService(data);
 
     res.status(201).json({
       status: "success",
@@ -21,7 +25,7 @@ export const addAdmissionDetails = async (req, res) => {
 export const getAdmissionDetails = async (req, res) => {
   try {
     const schoolId = req.params.id;
-    const admissions = await Admission.find({ schoolId });
+    const admissions = await getAdmissionBySchoolService(schoolId);
 
     res.status(200).json({
       status: "success",
@@ -38,7 +42,7 @@ export const updateAdmissionDetails = async (req, res) => {
     const admissionId = req.params.id;
     const updates = req.body;
 
-    const updatedAdmission = await Admission.findByIdAndUpdate(admissionId, updates, { new: true });
+    const updatedAdmission = await updateAdmissionService(admissionId, updates);
 
     if (!updatedAdmission)
       return res.status(404).json({ status: "failed", message: "Admission not found" });
@@ -58,7 +62,7 @@ export const deleteAdmissionDetails = async (req, res) => {
   try {
     const admissionId = req.params.id;
 
-    const deletedAdmission = await Admission.findByIdAndDelete(admissionId);
+    const deletedAdmission = await deleteAdmissionService(admissionId);
 
     if (!deletedAdmission)
       return res.status(404).json({ status: "failed", message: "Admission not found" });

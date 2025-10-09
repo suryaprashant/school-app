@@ -18,7 +18,7 @@ export const protectAdmin = async (req, res, next) => {
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.SECRET);
         if (decoded.userType !== 'admin') {
             return res.status(403).json({ message: 'Not an admin' });
         }

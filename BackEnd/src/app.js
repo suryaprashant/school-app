@@ -11,9 +11,11 @@ import reviewRoutes from './routes/review-routes.js';
 import openAIRoutes from './routes/ai-routes.js';
 import formRoutes from './routes/form-routes.js';
 import ChatbotRoutes from './routes/chatbot-routes.js';
+import adminRoutes from './routes/admin-routes.js';
 import { errorHandler } from './middlewares/cloudinary-error-handler.js';
 import otpRoutes from "./routes/otp-routes.js";
 import prefRoutes from "./routes/pref-routes.js";
+import { searchSchool } from './controllers/search-controllers.js';
 
 dotenv.config();
 connectDB();
@@ -34,8 +36,20 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/form', formRoutes);
 app.use('/api', openAIRoutes);
 app.use('/api/chatbot', ChatbotRoutes);
+app.use('/api/admin', adminRoutes);
 app.use("/api/otp", otpRoutes);
 app.use("/api/preferences", prefRoutes);
+
+
+
+// Public search alias to support /api/search
+app.get('/api/search', searchSchool);
+
+
+// Health check
+app.get('/api/health', (req, res) => {
+    res.status(200).json({ status: 'ok' });
+});
 
 
 // Global error handler for cloudinary

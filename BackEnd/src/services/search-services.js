@@ -1,12 +1,19 @@
 import School from "../models/school-model.js";
 
 export const searchSchoolsService = async ({ search, boards, cities, state,schoolMode, genderType, feeRange, page, limit }) => {
-  const boardArrays = boards ? (Array.isArray(boards) ? boards : boards.split(",")) : [];
-  const stateArray = state ? (Array.isArray(state) ? state : state.split(",")) : [];
-  const cityArray = cities ? (Array.isArray(cities) ? cities : cities.split(",")) : [];
-const modeArray = schoolMode ? (Array.isArray(schoolMode) ? schoolMode : schoolMode.split(",")).map(m => m.toLowerCase()) : [];
-const genderArray = genderType ? (Array.isArray(genderType) ? genderType : genderType.split(",")).map(g => g.toLowerCase()) : [];
-const feeArray = feeRange ? (Array.isArray(feeRange) ? feeRange : feeRange.split(",")) : [];
+  const normalizeToArray = (value) => {
+    if (!value && value !== 0) return [];
+    if (Array.isArray(value)) return value;
+    if (typeof value === 'string') return value.split(',').map(s => s.trim()).filter(Boolean);
+    return [value];
+  };
+
+  const boardArrays = normalizeToArray(boards);
+  const stateArray = normalizeToArray(state);
+  const cityArray = normalizeToArray(cities);
+  const modeArray = normalizeToArray(schoolMode).map(m => String(m).toLowerCase());
+  const genderArray = normalizeToArray(genderType).map(g => String(g).toLowerCase());
+  const feeArray = normalizeToArray(feeRange);
 
 
 
@@ -17,7 +24,7 @@ const feeArray = feeRange ? (Array.isArray(feeRange) ? feeRange : feeRange.split
 
   const invalidBoards = boardArrays.filter(s => !validBoards.includes(s));
   if (invalidBoards.length > 0) {
-    throw { status: 400, message: `Invalid stream(s): ${invalidBoards.join(", ")}. Allowed: ${validBoards.join(", ")}` };
+    throw { status: 400, message: `Invalid board(s): ${invalidBoards.join(", ")}. Allowed: ${validBoards.join(", ")}` };
   }
 
   let query = {};
