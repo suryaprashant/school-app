@@ -2,17 +2,22 @@
 import axios from 'axios';
 
 class AIService {
+
+  
   constructor() {
     this.apiKey = process.env.API_KEY; // set in .env
     this.baseUrl = 'https://generativelanguage.googleapis.com/v1beta';
-    this.model = 'models/gemini-1.5-flash'; // model to use
+    this.model = 'models/gemini-pro-latest'; // model to use
   }
+
 
   /**
    * Public method: returns { aiResponse, recommendedSchools }
    * - aiResponse: cleaned text returned by AI (comma-separated names)
    * - recommendedSchools: array of names (split and trimmed)
    */
+
+
   async getSchoolRecommendations(filters = {}) {
     try {
       const promptText = this.buildPrompt(filters);
@@ -42,7 +47,7 @@ class AIService {
 
     return `Based on these criteria: ${criteria}
 
-Generate a list of 3 creative but realistic Indian school names that match the criteria.
+Generate a list of 3  school names that match the criteria.
 Return ONLY a comma-separated list of the 3 school names with no extra commentary or numbering.
 Example format:
 "Excel Academy, Bright Future International, Knowledge Heights School"`;
@@ -83,7 +88,7 @@ Example format:
       // generationConfig holds temperature, tokens etc.
       generationConfig: {
         temperature: 0.7,
-        maxOutputTokens: 200,
+        maxOutputTokens: 4000,
         topP: 0.8,
         topK: 40
       }
