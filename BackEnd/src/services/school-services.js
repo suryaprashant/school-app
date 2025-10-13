@@ -318,27 +318,37 @@ function getDistanceInKm(lat1, lon1, lat2, lon2) {
 export const getNearbySchoolsService = async (longitude, latitude, state) => {
   console.log(`--- DEBUG: Searching for schools with status: "accepted" and state: "${state}" ---`);
 
-  // Find schools matching the state
+  // This part remains the same
   const stateSchools = await School.find({ status: 'accepted', state: state });
 
-  console.log(`--- DEBUG: Found ${stateSchools.length} schools in that state.`);
-
   if (stateSchools.length === 0) {
-    console.log("--- DEBUG: Since no schools were found for the state, the filter will stop here.");
     return [];
   }
 
-  // Filter the found schools by distance
-  const nearbySchools = stateSchools.filter(school => {
+  // NEW: Use .reduce() to filter and transform simultaneously
+  const nearbySchoolsWithDistance = stateSchools.reduce((acc, school) => {
+    // Skip schools with no coordinates
     if (!school.latitude || !school.longitude) {
-      console.log(`--- DEBUG: Skipping school "${school.name}" because it has no coordinates.`);
-      return false;
+      return acc;
     }
+
     const distance = getDistanceInKm(latitude, longitude, school.latitude, school.longitude);
-    console.log(`--- DEBUG: Distance to "${school.name}" is ${distance.toFixed(2)} km.`);
-    return distance <= 4;
-  });
-  
-  console.log(`--- DEBUG: After filtering, found ${nearbySchools.length} schools within 4km.`);
-  return nearbySchools;
+
+    // If the school is within the radius...
+    if (distance <= 4) {
+      // Convert the Mongoose document to a plain JavaScript object
+      const schoolObject = school.toObject();
+      
+      // Add the new 'distance' field, rounded to two decimal places
+      schoolObject.distance = parseFloat(distance.toFixed(2));
+      
+      // Add the modified object to our results array
+      acc.push(schoolObject);
+    }
+    
+    return acc;
+  }, []); // The initial value for our accumulator is an empty array
+
+  console.log(`--- DEBUG: Found ${nearbySchoolsWithDistance.length} schools within 4km.`);
+  return nearbySchoolsWithDistance;
 };
