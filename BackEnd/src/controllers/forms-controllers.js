@@ -6,7 +6,8 @@ import {
   submitFormService,
   submitBulkFormsService,
   updateFormStatusService,
-  deleteFormService
+  deleteFormService,
+  getIsFormApplied
 } from "../services/forms-services.js";
 
 export const getFormsByStudent = async (req, res) => {
@@ -82,17 +83,30 @@ export const submitBulkForms = async (req, res) => {
 };
 
 export const updateFormStatus = async (req, res) => {
+
   try {
     const { formId } = req.params;
     const { status } = req.query;
+    // 1. GET THE NOTE FROM THE REQUEST BODY
+    const { note } = req.body;
+    
 
-    const data = await updateFormStatusService(formId, status);
+    // 2. ADD VALIDATION: Ensure note exists for interview status
+    if (status === 'Interview' && (!note || note.trim() === '')) {
+        return res.status(400).json({ 
+            status: "failed", 
+            message: "An interview note is required when the status is 'Call for Interview'." 
+        });
+    }
+
+    // 3. PASS THE NOTE to the service function
+    const data = await updateFormStatusService(formId, status, note);
     res.status(200).json({ status: "success", message: "Form status updated", data });
   } catch (err) {
+    console.error("Error caught in controller:", err);
     res.status(err.status || 500).json({ status: "failed", message: err.message });
   }
 };
-
 export const deleteForm = async (req, res) => {
   try {
     const { formId } = req.params;
@@ -103,3 +117,16 @@ export const deleteForm = async (req, res) => {
     res.status(err.status || 500).json({ status: "failed", message: err.message });
   }
 };
+
+export const isFormApplied = async (req, res) => {
+  try {
+    const { studId, schoolId } = req.params;
+
+    const data = await getIsFormApplied(studId, schoolId);
+
+    res.status(200).json({ status: "success", message: "Form application status fetched", data });
+
+  } catch (err) {
+    res.status(err.status || 500).json({ status: "failed", message: err.message });
+  }
+}
