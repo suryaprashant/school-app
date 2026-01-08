@@ -7,7 +7,8 @@ import {
   submitForm,
   submitBulkForms,
   updateFormStatus,
-  deleteForm
+  deleteForm,
+  isFormApplied,
 } from "../controllers/forms-controllers.js";
 
 import ensureAuthenticated from "../middlewares/validate-token-middleware.js";
@@ -19,6 +20,8 @@ router.get("/student/:studId", getFormsByStudent);
 router.get("/school/:schoolId", getFormsBySchool);
 
 router.get("/track/:formId", trackForm);
+
+router.get("/is-applied/:studId/:schoolId", isFormApplied);
 
 router.get("/:formId", ensureAuthenticated, getFormDetails);
 

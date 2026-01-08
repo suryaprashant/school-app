@@ -18,26 +18,33 @@ class AIService {
    */
 
 
-  async getSchoolRecommendations(filters = {}) {
-    try {
-      const promptText = this.buildPrompt(filters);
-      const aiText = await this.callGeminiAI(promptText);
+// Inside the AIService class
+async getSchoolRecommendations(filters = {}) {
+  try {
+    const promptText = this.buildPrompt(filters);
+    // aiText is now a JSON string, e.g., '[{"name": "...", "website": "..."}]'
+    const aiText = await this.callGeminiAI(promptText);
 
-      // aiText is a single comma separated string
-      const recommendedSchools = this.parseNames(aiText);
-      return {
-        aiResponse: aiText,
-        recommendedSchools,
-      };
-    } catch (err) {
-      console.error('AIService.getSchoolRecommendations error:', err);
-      const fallback = this.createFallbackResponse();
-      return {
-        aiResponse: fallback,
-        recommendedSchools: this.parseNames(fallback),
-      };
-    }
+    // Parse the JSON string into a JavaScript array of objects
+    const recommendedSchools = JSON.parse(aiText); 
+    
+    return {
+      aiResponse: aiText, // You can still return the raw string if needed
+      recommendedSchools, // This is now an array of objects
+    };
+  } catch (err) {
+    console.error('AIService.getSchoolRecommendations error:', err);
+    // Fallback can be a simple array of objects too
+    const fallbackSchools = [
+      { name: 'Excel Academy', website: 'https://www.google.com/search?q=Excel+Academy' },
+      { name: 'Bright Future International', website: 'https://www.google.com/search?q=Bright+Future+International' },
+    ];
+    return {
+      aiResponse: 'Could not fetch recommendations at this time.',
+      recommendedSchools: fallbackSchools,
+    };
   }
+}
 
   // Build a short, precise prompt from filters
   buildPrompt(filters) {
@@ -48,10 +55,17 @@ class AIService {
     return `Based on these criteria: ${criteria}
 
 Generate a list of 3  school names that match the criteria.
-Return ONLY a comma-separated list of the 3 school names with no extra commentary or numbering.
+For each school, provide its name and a plausible, realistic website URL.
+Return ONLY a valid JSON array of objects, where each object has a "name" and a "website" key.
+If you cannot find or create a realistic website for a school, use null for the website value.
+
 Example format:
-"Excel Academy, Bright Future International, Knowledge Heights School"`;
-  }
+[
+  {"name": "Excel Academy", "website": "https://www.excelacademy.edu.in"},
+  {"name": "Bright Future International", "website": "https://www.brightfutureintl.org"},
+  {"name": "Knowledge Heights School", "website": "https://www.knowledgeheights.ac.in"}
+]`;
+}
 
   // Friendly mapping of filter keys -> readable names
   formatFilterName(key) {
@@ -105,9 +119,10 @@ Example format:
         const candidate = resp.data.candidates[0];
         // Some versions return candidate.content.parts[0].text
         const text = candidate?.content?.parts?.[0]?.text;
-        if (text && typeof text === 'string') {
-          return this.cleanAIResponse(text);
-        }
+      if (text && typeof text === 'string') {
+  // Use the new JSON cleaning function
+  return this.cleanAndExtractJson(text);
+}
       }
 
       // If we didn't find the expected structure, log response and throw
@@ -124,7 +139,19 @@ Example format:
       throw err;
     }
   }
+cleanAndExtractJson(response) {
+  // Find the first '[' and the last ']' to extract the array
+  const startIndex = response.indexOf('[');
+  const endIndex = response.lastIndexOf(']');
 
+  if (startIndex === -1 || endIndex === -1) {
+    console.error("AI response did not contain a valid JSON array:", response);
+    throw new Error('Could not find a valid JSON array in the AI response.');
+  }
+
+  // Extract and return the clean JSON string
+  return response.substring(startIndex, endIndex + 1);
+}
   // Clean: keep last non-empty line, remove quotes, return comma-separated string
   cleanAIResponse(response) {
     let cleaned = String(response).trim();
